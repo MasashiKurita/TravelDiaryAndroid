@@ -3,5 +3,7 @@
 
     <string name="app_name">TravelDiaryAndroid</string>
     <string name="title_savedata_detail">SaveData Detail</string>
+    <string name="create_story">Create Story</string>
+    <string name="select_story">Select Story</string>
 
 </resources>

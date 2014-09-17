@@ -30,6 +30,7 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.martymarron.traveldiaryandroid.SaveDataListActivity" />
         </activity>
+        <activity android:name=".InitiationActivity"></activity>
     </application>
 
 </manifest>

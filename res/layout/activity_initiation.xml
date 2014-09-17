@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Space xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/Space1"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".InitiationActivity" xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <Button
+        android:id="@+id/createStoryButton"
+        android:text="@string/create_story" />
+
+    <Button
+        android:id="@+id/selectStoryButton"
+        android:text="@string/select_story" />
+
+</Space>
