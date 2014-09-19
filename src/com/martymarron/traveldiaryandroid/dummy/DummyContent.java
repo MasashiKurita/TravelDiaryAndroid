@@ -25,12 +25,13 @@ public class DummyContent {
 
 	static {
 		// Add 3 sample items.
+		addItem(new DummyItem("0", "+ New Story..."));
 		addItem(new DummyItem("1", "Item 1"));
 		addItem(new DummyItem("2", "Item 2"));
 		addItem(new DummyItem("3", "Item 3"));
 	}
 
-	private static void addItem(DummyItem item) {
+	protected static void addItem(DummyItem item) {
 		ITEMS.add(item);
 		ITEM_MAP.put(item.id, item);
 	}

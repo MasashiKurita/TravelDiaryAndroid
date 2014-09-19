@@ -30,7 +30,34 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.martymarron.traveldiaryandroid.SaveDataListActivity" />
         </activity>
-        <activity android:name=".InitiationActivity"></activity>
+        <activity
+            android:name=".InitiationActivity"
+            android:label="@string/title_initiation" >
+        </activity>
+        <activity
+            android:name=".CreateStoryActivity"
+            android:label="@string/title_activity_create_story"
+            android:parentActivityName=".InitiationActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.martymarron.traveldiaryandroid.InitiationActivity" />
+        </activity>
+        <activity
+            android:name=".StoryListActivity"
+            android:label="@string/title_story_list"
+            android:parentActivityName=".InitiationActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.martymarron.traveldiaryandroid.InitiationActivity" />
+        </activity>
+        <activity
+            android:name=".StoryDetailActivity"
+            android:label="@string/title_story_detail"
+            android:parentActivityName=".StoryListActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.martymarron.traveldiaryandroid.StoryListActivity" />
+        </activity>
     </application>
 
 </manifest>

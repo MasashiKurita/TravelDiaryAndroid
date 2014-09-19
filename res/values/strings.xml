@@ -5,5 +5,11 @@
     <string name="title_savedata_detail">SaveData Detail</string>
     <string name="create_story">Create Story</string>
     <string name="select_story">Select Story</string>
+    <string name="title_initiation">Initiation</string>
+    <string name="title_activity_create_story">CreateStoryActivity</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="title_story_list">Stories</string>
+    <string name="title_story_detail">Story Detail</string>
 
 </resources>

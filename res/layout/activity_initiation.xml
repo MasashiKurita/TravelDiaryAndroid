@@ -1,16 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Space xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/Space1"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/linerLayout1"
+    android:orientation="vertical"
+    android:layout_gravity="center_vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".InitiationActivity" xmlns:android="http://schemas.android.com/apk/res/android">
+    android:layout_height="wrap_content"
+    tools:context="com.martymarron.traveldiaryandroid.InitiationActivity" >
 
     <Button
         android:id="@+id/createStoryButton"
-        android:text="@string/create_story" />
+        android:layout_gravity="center"
+        android:layout_weight="1"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:layout_margin="20dp"
+        android:text="@string/create_story"
+        android:onClick="openCreateStory" />
 
     <Button
         android:id="@+id/selectStoryButton"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:layout_gravity="center"
+        android:layout_margin="20dp"
+        android:layout_weight="1"
+        android:onClick="openSelectStory"
         android:text="@string/select_story" />
 
-</Space>
+</LinearLayout>

@@ -71,9 +71,16 @@ public class SaveDataListActivity extends FragmentActivity implements
 		} else {
 			// In single-pane mode, simply start the detail activity
 			// for the selected item ID.
-			Intent detailIntent = new Intent(this, SaveDataDetailActivity.class);
-			detailIntent.putExtra(SaveDataDetailFragment.ARG_ITEM_ID, id);
-			startActivity(detailIntent);
+			if (id.equals("0")) {
+
+				Intent initiationIntent = new Intent(this, InitiationActivity.class);
+			    startActivity(initiationIntent);
+			} else {
+				
+			    Intent detailIntent = new Intent(this, SaveDataDetailActivity.class);
+			    detailIntent.putExtra(SaveDataDetailFragment.ARG_ITEM_ID, id);
+			    startActivity(detailIntent);
+			}
 		}
 	}
 }

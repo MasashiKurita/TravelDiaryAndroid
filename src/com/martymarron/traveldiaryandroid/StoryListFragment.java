@@ -1,24 +1,24 @@
 package com.martymarron.traveldiaryandroid;
 
 import android.app.Activity;
+import android.app.ListFragment;
 import android.os.Bundle;
-import android.support.v4.app.ListFragment;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
-import com.martymarron.traveldiaryandroid.dummy.DummySaveData;
+import com.martymarron.traveldiaryandroid.dummy.DummyStory;
 
 /**
- * A list fragment representing a list of SaveDatas. This fragment also supports
+ * A list fragment representing a list of Stories. This fragment also supports
  * tablet devices by allowing list items to be given an 'activated' state upon
  * selection. This helps indicate which item is currently being viewed in a
- * {@link SaveDataDetailFragment}.
+ * {@link StoryDetailFragment}.
  * <p>
  * Activities containing this fragment MUST implement the {@link Callbacks}
  * interface.
  */
-public class SaveDataListFragment extends ListFragment {
+public class StoryListFragment extends ListFragment {
 
 	/**
 	 * The serialization (saved instance state) Bundle key representing the
@@ -63,7 +63,7 @@ public class SaveDataListFragment extends ListFragment {
 	 * Mandatory empty constructor for the fragment manager to instantiate the
 	 * fragment (e.g. upon screen orientation changes).
 	 */
-	public SaveDataListFragment() {
+	public StoryListFragment() {
 	}
 
 	@Override
@@ -74,9 +74,9 @@ public class SaveDataListFragment extends ListFragment {
 //		setListAdapter(new ArrayAdapter<DummyContent.DummyItem>(getActivity(),
 //				android.R.layout.simple_list_item_activated_1,
 //				android.R.id.text1, DummyContent.ITEMS));
-		setListAdapter(new ArrayAdapter<DummySaveData.DummyItem>(getActivity(),
+		setListAdapter(new ArrayAdapter<DummyStory.DummyItem>(getActivity(),
 				android.R.layout.simple_list_item_activated_1,
-				android.R.id.text1, DummySaveData.ITEMS));
+				android.R.id.text1, DummyStory.ITEMS));
 	}
 
 	@Override
@@ -120,7 +120,7 @@ public class SaveDataListFragment extends ListFragment {
 		// Notify the active callbacks interface (the activity, if the
 		// fragment is attached to one) that an item has been selected.
 //		mCallbacks.onItemSelected(DummyContent.ITEMS.get(position).id);
-		mCallbacks.onItemSelected(DummySaveData.ITEMS.get(position).id);
+		mCallbacks.onItemSelected(DummyStory.ITEMS.get(position).id);
 	}
 
 	@Override
