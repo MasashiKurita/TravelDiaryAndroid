@@ -2,9 +2,10 @@ package com.martymarron.traveldiaryandroid;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v4.app.NavUtils;
+import android.support.v7.app.ActionBarActivity;
 import android.view.MenuItem;
+import android.view.View;
 
 /**
  * An activity representing a single SaveData detail screen. This activity is
@@ -64,4 +65,10 @@ public class SaveDataDetailActivity extends ActionBarActivity {
 		}
 		return super.onOptionsItemSelected(item);
 	}
+	
+	public void openSelectStory(View view) {
+		Intent intent = new Intent(this, StoryListActivity.class);
+		startActivity(intent);
+	}
+
 }
