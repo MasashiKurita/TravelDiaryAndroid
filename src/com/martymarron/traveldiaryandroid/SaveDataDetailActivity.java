@@ -67,7 +67,7 @@ public class SaveDataDetailActivity extends ActionBarActivity {
 	}
 	
 	public void openSelectStory(View view) {
-		Intent intent = new Intent(this, StoryListActivity.class);
+		Intent intent = new Intent(this, MapActivity.class);
 		startActivity(intent);
 	}
 
