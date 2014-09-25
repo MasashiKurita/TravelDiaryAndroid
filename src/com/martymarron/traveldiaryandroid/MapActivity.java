@@ -1,38 +1,41 @@
 package com.martymarron.traveldiaryandroid;
 
-import android.app.Activity;
-
 import android.app.ActionBar;
+import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
-import android.content.Context;
-import android.os.Build;
+import android.app.FragmentTransaction;
 import android.os.Bundle;
-import android.view.Gravity;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.widget.DrawerLayout;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.support.v4.widget.DrawerLayout;
-import android.widget.ArrayAdapter;
-import android.widget.TextView;
 
-public class MapActivity extends Activity implements
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapView;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
+
+public class MapActivity extends FragmentActivity implements
 		NavigationDrawerFragment.NavigationDrawerCallbacks {
 
+	private static final String MAP_FRAGMENT_TAG = "map";
+	
 	/**
 	 * Fragment managing the behaviors, interactions and presentation of the
 	 * navigation drawer.
 	 */
 	private NavigationDrawerFragment mNavigationDrawerFragment;
-
+	
 	/**
 	 * Used to store the last screen title. For use in
 	 * {@link #restoreActionBar()}.
 	 */
 	private CharSequence mTitle;
-
+		
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -51,10 +54,9 @@ public class MapActivity extends Activity implements
 	public void onNavigationDrawerItemSelected(int position) {
 		// update the main content by replacing fragments
 		FragmentManager fragmentManager = getFragmentManager();
-		fragmentManager
-				.beginTransaction()
-				.replace(R.id.container,
-						PlaceholderFragment.newInstance(position + 1)).commit();
+		FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+		fragmentTransaction.replace(R.id.container, PlaceholderFragment.newInstance(position + 1));
+		fragmentTransaction.commit();
 	}
 
 	public void onSectionAttached(int number) {
@@ -107,11 +109,17 @@ public class MapActivity extends Activity implements
 	 * A placeholder fragment containing a simple view.
 	 */
 	public static class PlaceholderFragment extends Fragment {
+		
+		private static final String TAG = "PlaceholderFragment";
 		/**
 		 * The fragment argument representing the section number for this
 		 * fragment.
 		 */
 		private static final String ARG_SECTION_NUMBER = "section_number";
+
+		private MapView mView;
+		
+		private GoogleMap mMap;
 
 		/**
 		 * Returns a new instance of this fragment for the given section number.
@@ -126,12 +134,24 @@ public class MapActivity extends Activity implements
 
 		public PlaceholderFragment() {
 		}
+		
+
+		@Override
+		public void onCreate(Bundle savedInstanceState) {
+			super.onCreate(savedInstanceState);
+		}
 
 		@Override
 		public View onCreateView(LayoutInflater inflater, ViewGroup container,
 				Bundle savedInstanceState) {
 			View rootView = inflater.inflate(R.layout.fragment_map, container,
 					false);
+			
+			mView = (MapView) rootView.findViewById(R.id.map);
+			mView.onCreate(savedInstanceState);
+			
+			setUpMapIfNeeded();
+						
 			return rootView;
 		}
 
@@ -141,6 +161,35 @@ public class MapActivity extends Activity implements
 			((MapActivity) activity).onSectionAttached(getArguments().getInt(
 					ARG_SECTION_NUMBER));
 		}
+		
+		
+		 @Override
+		public void onResume() {
+			super.onResume();
+			mView.onResume();
+			
+			setUpMapIfNeeded();
+		}
+
+		private void setUpMapIfNeeded() {
+            // Do a null check to confirm that we have not already instantiated the map.
+            if (mMap == null) {
+                // Try to obtain the map from the SupportMapFragment.
+                mMap = mView.getMap();
+
+                // Check if we were successful in obtaining the map.
+                if (mMap != null) {
+                    setUpMap();
+                }
+            }
+         }
+
+         private void setUpMap() {
+ 			 mMap.getUiSettings().setMyLocationButtonEnabled(true);
+ 			 mMap.setMyLocationEnabled(false);    			
+             mMap.addMarker(new MarkerOptions().position(new LatLng(0, 0)).title("Marker"));
+         }
+		
 	}
 
 }
