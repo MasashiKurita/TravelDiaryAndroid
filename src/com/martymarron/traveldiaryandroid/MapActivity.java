@@ -14,10 +14,14 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
+import com.google.android.gms.maps.MapsInitializer;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.martymarron.traveldiaryandroid.milestone.MileStone;
 
 public class MapActivity extends FragmentActivity implements
 		NavigationDrawerFragment.NavigationDrawerCallbacks {
@@ -144,8 +148,7 @@ public class MapActivity extends FragmentActivity implements
 		@Override
 		public View onCreateView(LayoutInflater inflater, ViewGroup container,
 				Bundle savedInstanceState) {
-			View rootView = inflater.inflate(R.layout.fragment_map, container,
-					false);
+			View rootView = inflater.inflate(R.layout.fragment_map, container, false);
 			
 			mView = (MapView) rootView.findViewById(R.id.map);
 			mView.onCreate(savedInstanceState);
@@ -158,8 +161,7 @@ public class MapActivity extends FragmentActivity implements
 		@Override
 		public void onAttach(Activity activity) {
 			super.onAttach(activity);
-			((MapActivity) activity).onSectionAttached(getArguments().getInt(
-					ARG_SECTION_NUMBER));
+			((MapActivity) activity).onSectionAttached(getArguments().getInt(ARG_SECTION_NUMBER));
 		}
 		
 		
@@ -182,13 +184,29 @@ public class MapActivity extends FragmentActivity implements
                     setUpMap();
                 }
             }
-         }
+        }
 
-         private void setUpMap() {
- 			 mMap.getUiSettings().setMyLocationButtonEnabled(true);
- 			 mMap.setMyLocationEnabled(false);    			
-             mMap.addMarker(new MarkerOptions().position(new LatLng(0, 0)).title("Marker"));
-         }
+        private void setUpMap() {
+        	
+        	MapsInitializer.initialize(this.getActivity()); 
+        	 
+        	mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+ 			mMap.getUiSettings().setMyLocationButtonEnabled(true);
+ 			mMap.setMyLocationEnabled(false);
+ 			 
+ 	        LatLng location = new LatLng(35.681382, 139.766084);
+ 	        CameraPosition camerapos = new CameraPosition.Builder().target(location).zoom(15.5f).build();
+ 	        mMap.moveCamera(CameraUpdateFactory.newCameraPosition(camerapos));
+ 	        
+ 	        MarkerOptions options = new MarkerOptions();
+ 	        options.position(location);
+ 	        options.title("Tokyo Station");
+ 	        options.snippet(location.toString());
+
+            mMap.addMarker(options);
+            
+            MileStone mileStone = new MileStone(getActivity(), mMap);
+        }
 		
 	}
 
