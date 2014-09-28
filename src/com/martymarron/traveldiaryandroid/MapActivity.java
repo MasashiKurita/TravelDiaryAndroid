@@ -52,6 +52,7 @@ public class MapActivity extends FragmentActivity implements
 		// Set up the drawer.
 		mNavigationDrawerFragment.setUp(R.id.navigation_drawer,
 				(DrawerLayout) findViewById(R.id.drawer_layout));
+
 	}
 
 	@Override

@@ -1,5 +1,8 @@
 package com.martymarron.traveldiaryandroid;
 
+import java.util.Arrays;
+import java.util.List;
+
 import android.app.Activity;
 import android.app.ActionBar;
 import android.app.Fragment;
@@ -10,6 +13,7 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -29,6 +33,8 @@ import android.widget.Toast;
  * implemented here.
  */
 public class NavigationDrawerFragment extends Fragment {
+	
+	private static final String TAG = "NavigationDrawerFragment";
 
 	/**
 	 * Remember the position of the selected item.
@@ -58,6 +64,17 @@ public class NavigationDrawerFragment extends Fragment {
 	private int mCurrentSelectedPosition = 0;
 	private boolean mFromSavedInstanceState;
 	private boolean mUserLearnedDrawer;
+	
+	private String[] milestones;
+	
+	private String[] sectins = {
+			"Section 1",
+			"Section 2",
+			"Section 3"
+	};
+	private List<String> sectionTitles = Arrays.asList(sectins);
+	
+	private ArrayAdapter<String> arrayAdapter;
 
 	public NavigationDrawerFragment() {
 	}
@@ -94,6 +111,8 @@ public class NavigationDrawerFragment extends Fragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
+		Log.d(TAG, "NavigatinDrawerFragment.onCreateView");
+
 		mDrawerListView = (ListView) inflater.inflate(
 				R.layout.fragment_navigation_drawer, container, false);
 		mDrawerListView
@@ -104,13 +123,14 @@ public class NavigationDrawerFragment extends Fragment {
 						selectItem(position);
 					}
 				});
-		mDrawerListView.setAdapter(new ArrayAdapter<String>(getActionBar()
-				.getThemedContext(),
+		
+		//Log.d(TAG, this.getMilestones().toString());
+		
+		mDrawerListView.setAdapter(new ArrayAdapter<String>(
+				getActionBar().getThemedContext(),
 				android.R.layout.simple_list_item_activated_1,
-				android.R.id.text1, new String[] {
-						getString(R.string.title_section1),
-						getString(R.string.title_section2),
-						getString(R.string.title_section3), }));
+				android.R.id.text1, 
+				(String[]) this.sectionTitles.toArray()));
 		mDrawerListView.setItemChecked(mCurrentSelectedPosition, true);
 		return mDrawerListView;
 	}
@@ -130,6 +150,7 @@ public class NavigationDrawerFragment extends Fragment {
 	 *            The DrawerLayout containing this fragment's UI.
 	 */
 	public void setUp(int fragmentId, DrawerLayout drawerLayout) {
+		Log.d(TAG, "NavigatinDrawerFragment.setUp");
 		mFragmentContainerView = getActivity().findViewById(fragmentId);
 		mDrawerLayout = drawerLayout;
 
@@ -305,5 +326,13 @@ public class NavigationDrawerFragment extends Fragment {
 		 * Called when an item in the navigation drawer is selected.
 		 */
 		void onNavigationDrawerItemSelected(int position);
+	}
+	
+	public void setMilestones(String[] milestones) {
+		this.milestones = Arrays.copyOf(milestones, milestones.length);
+	}
+	
+	public String[] getMilestones() {
+		return this.milestones;
 	}
 }
