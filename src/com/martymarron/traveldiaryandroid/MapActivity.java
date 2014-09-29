@@ -1,13 +1,16 @@
 package com.martymarron.traveldiaryandroid;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.widget.DrawerLayout;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -23,7 +26,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.martymarron.traveldiaryandroid.milestone.MileStone;
 
-public class MapActivity extends FragmentActivity implements
+public class MapActivity extends Activity implements
 		NavigationDrawerFragment.NavigationDrawerCallbacks {
 
 	private static final String MAP_FRAGMENT_TAG = "map";
@@ -39,20 +42,30 @@ public class MapActivity extends FragmentActivity implements
 	 * {@link #restoreActionBar()}.
 	 */
 	private CharSequence mTitle;
+	
+	List<String> sectionTitles = new ArrayList<String>();
 		
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		Log.d(MAP_FRAGMENT_TAG, "MapActivity.onCreate");
+				
 		setContentView(R.layout.activity_map);
-
+		
 		mNavigationDrawerFragment = (NavigationDrawerFragment) getFragmentManager()
 				.findFragmentById(R.id.navigation_drawer);
 		mTitle = getTitle();
 
 		// Set up the drawer.
-		mNavigationDrawerFragment.setUp(R.id.navigation_drawer,
-				(DrawerLayout) findViewById(R.id.drawer_layout));
+		sectionTitles.add("Section 1");
+		sectionTitles.add("Section 2");
+		sectionTitles.add("Section 3");
+		sectionTitles.add("Section 4");
 
+		mNavigationDrawerFragment.setUp(R.id.navigation_drawer,
+				(DrawerLayout) findViewById(R.id.drawer_layout),
+				sectionTitles);
+		
 	}
 
 	@Override
