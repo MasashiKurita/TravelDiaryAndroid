@@ -141,12 +141,8 @@ public class NavigationDrawerFragment extends Fragment {
 	 * @param drawerLayout
 	 *            The DrawerLayout containing this fragment's UI.
 	 */
-	public void setUp(int fragmentId, DrawerLayout drawerLayout, List<String> titleList) {
+	public void setUp(int fragmentId, DrawerLayout drawerLayout) {
 		Log.d(TAG, "NavigatinDrawerFragment.setUp");
-		
-		arrayAdapter.addAll(titleList);
-		mDrawerListView.setAdapter(arrayAdapter);
-		Log.d(TAG, "add" + titleList.size() + "section titles");
 		
 		mFragmentContainerView = getActivity().findViewById(fragmentId);
 		mDrawerLayout = drawerLayout;
@@ -325,4 +321,9 @@ public class NavigationDrawerFragment extends Fragment {
 		void onNavigationDrawerItemSelected(int position);
 	}
 	
+	public void updateListAdapter(List<String> sectionTitles) {
+		Log.d(TAG, "add " + sectionTitles.size() + " section titles");
+		arrayAdapter.addAll(sectionTitles);
+		mDrawerListView.setAdapter(arrayAdapter);	
+	}
 }
