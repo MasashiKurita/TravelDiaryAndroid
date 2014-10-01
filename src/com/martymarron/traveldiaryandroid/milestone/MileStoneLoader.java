@@ -3,8 +3,11 @@
  */
 package com.martymarron.traveldiaryandroid.milestone;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -30,6 +33,8 @@ public class MileStoneLoader {
 
 	private MyRequestCallback callback;
 	
+	private List<MileStone> mileStones;
+	
 	private MileStoneLoader() {
 	}
 	
@@ -47,6 +52,7 @@ public class MileStoneLoader {
 		    if (session != null) {
 
 			    Bundle param = new Bundle();
+			    param.putString("locale", Locale.getDefault().toString());
 			    param.putString("ids", "293823777472129,944207338929355,629132557185394,1407160042867804");
 			    Request request = new Request(session, "", param, HttpMethod.GET, callback);
 			    Log.d(TAG, "start get venues");
@@ -57,6 +63,10 @@ public class MileStoneLoader {
 		} catch (Exception e) {
 			throw new MileStoneLoaderException(e);
 		}
+	}
+	
+	public List<MileStone> getMileStones() {
+		return this.mileStones;
 	}
 
 	public interface MileStoneLoaderCallback {
@@ -91,13 +101,14 @@ public class MileStoneLoader {
 			} else {
 
 				Log.d(TAG, "start " + response.getRequest().getGraphPath());
+			    Log.d(TAG, "raw request=(" + response.getRequest().toString() + ")");
 				Log.d(TAG, "raw response=(" + response.getRawResponse() + ")");
 
 	            JSONObject graphResponse = response.getGraphObject().getInnerJSONObject();
 	        
 			    try {
-				
-				    callback.onLoaded(loadMileStones(graphResponse));
+				    mileStones = new ArrayList<MileStone>(loadMileStones(graphResponse));
+				    callback.onLoaded(mileStones);
 				
 			    } catch (JSONException e) {
 				    Log.w(TAG, "JSON error "+ e.getMessage());
@@ -113,13 +124,27 @@ public class MileStoneLoader {
 			JSONArray events = graphResponse.names();
 			
 			for (int i=0; i<events.length(); i++) {
-				JSONObject event = graphResponse.getJSONObject(events.getString(i));
-				JSONObject venue = event.getJSONObject("venue");
-
 		        MileStone ms = new MileStone();
-				ms.setLatitude(venue.getDouble("latitude"));
-				ms.setLongitude(venue.getDouble("longitude"));
+		        
+				JSONObject event = graphResponse.getJSONObject(events.getString(i));
+				ms.setName(event.getString("name"));
 				ms.setLocation(event.getString("location"));
+				ms.setTimezone(event.getString("timezone"));
+				try {
+					SimpleDateFormat stf = new SimpleDateFormat("yyyy-MM-dd");
+				    ms.setStartTime(stf.parse(event.getString("start_time")));
+					
+					SimpleDateFormat utf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
+					ms.setUpdatedTime(utf.parse(event.getString("updated_time")));
+				} catch (ParseException e) {
+					Log.w(TAG, e.getMessage());
+				}
+
+				JSONObject jsVenue = event.getJSONObject("venue");
+				MileStone.Venue venue = new MileStone.Venue();
+				venue.setLatitude(jsVenue.getDouble("latitude"));
+			    venue.setLongitude(jsVenue.getDouble("longitude"));
+				ms.setVenue(venue);
 				
 				milestones.add(ms);
 			}
