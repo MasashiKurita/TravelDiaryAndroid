@@ -9,6 +9,7 @@ import java.util.TimeZone;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.FragmentTransaction;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
@@ -21,6 +22,7 @@ import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.PolylineOptions;
 import com.martymarron.traveldiaryandroid.milestone.MileStone;
 import com.martymarron.traveldiaryandroid.milestone.MileStoneLoader;
 import com.martymarron.traveldiaryandroid.milestone.MileStoneLoader.MileStoneLoaderException;
@@ -59,12 +61,6 @@ public class MapActivity extends Activity implements
 				.findFragmentById(R.id.navigation_drawer);
 		mTitle = getTitle();
 
-		// Set up the drawer.
-//		sectionTitles.add("Section 1");
-//		sectionTitles.add("Section 2");
-//		sectionTitles.add("Section 3");
-//		sectionTitles.add("Section 4");
-
 		mNavigationDrawerFragment.setUp(R.id.navigation_drawer,
 				(DrawerLayout) findViewById(R.id.drawer_layout));
 		
@@ -84,11 +80,10 @@ public class MapActivity extends Activity implements
 												
 				@Override
 				public void onLoaded(List<MileStone> milestones) {
-					// TODO Auto-generated method stub
 					
 				    GoogleMap mMap = mMapFragment.getMap();
 					List<String> titleList = new ArrayList<String>();
-						
+				    List<LatLng> pointList = new ArrayList<LatLng>();
 					for (int i=0; i< milestones.size(); i++) {
 					    MileStone mileStone = milestones.get(i);
 						MileStone.Venue venue = mileStone.getVenue();
@@ -100,17 +95,26 @@ public class MapActivity extends Activity implements
 					    		Calendar.getInstance(TimeZone.getTimeZone(mileStone.getTimezone()));
 					    updatedTime.setTime(mileStone.getUpdatedTime());
 					    options.snippet(DateFormat.getInstance().format(updatedTime.getTime()));
-
+					    
 					    mMap.addMarker(options);
 					    titleList.add(mileStone.getName() + " at " + mileStone.getLocation());
-					        
+					    pointList.add(location);
+					    
 					    if (i==pos) {
 					        CameraPosition camerapos = 
 				        		new CameraPosition.Builder().target(location).zoom(15.5f).build();
-				 	        mMap.moveCamera(CameraUpdateFactory.newCameraPosition(camerapos));
+					        mMap.animateCamera(CameraUpdateFactory.newCameraPosition(camerapos));
 				 	        getActionBar().setTitle(mileStone.getName());
 				 	    }
-					}	
+					}
+					
+				    PolylineOptions pOptions = new PolylineOptions();
+				    pOptions.addAll(pointList);
+				    pOptions.color(Color.RED);
+				    pOptions.width(5);
+				    mMap.addPolyline(pOptions);
+
+					
 					mNavigationDrawerFragment.updateListAdapter(titleList);
 				}
 			});
@@ -124,7 +128,7 @@ public class MapActivity extends Activity implements
 		} else {
 			MileStone ms = msLoader.getMileStones().get(position);
 			MileStone.Venue venue = ms.getVenue();
-			mMapFragment.getMap().moveCamera(CameraUpdateFactory.newLatLng(new LatLng(venue.getLatitude(), venue.getLongitude())));
+			mMapFragment.getMap().animateCamera(CameraUpdateFactory.newLatLng(new LatLng(venue.getLatitude(), venue.getLongitude())));
 			mTitle = ms.getName();
 		}
 		

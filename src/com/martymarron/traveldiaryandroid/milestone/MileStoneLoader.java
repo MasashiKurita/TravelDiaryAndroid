@@ -6,6 +6,7 @@ package com.martymarron.traveldiaryandroid.milestone;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
@@ -149,6 +150,7 @@ public class MileStoneLoader {
 				milestones.add(ms);
 			}
 
+			Collections.sort(milestones);
 			return milestones;
 		}
 		

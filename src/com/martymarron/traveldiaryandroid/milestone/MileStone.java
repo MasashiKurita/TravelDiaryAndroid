@@ -3,7 +3,7 @@ package com.martymarron.traveldiaryandroid.milestone;
 import java.util.Date;
 
 
-public class MileStone {
+public class MileStone implements Comparable<MileStone> {
 	
 	private String name;
 		
@@ -131,6 +131,11 @@ public class MileStone {
 			this.longitude = longitude;
 		}
 
+	}
+
+	@Override
+	public int compareTo(MileStone another) {
+		return this.updatedTime.compareTo(another.updatedTime);
 	}
 	
 }
