@@ -106,8 +106,8 @@ public class MileStoneLoader {
 				Log.d(TAG, "raw response=(" + response.getRawResponse() + ")");
 
 	            JSONObject graphResponse = response.getGraphObject().getInnerJSONObject();
-	        
-			    try {
+
+	            try {
 				    mileStones = new ArrayList<MileStone>(loadMileStones(graphResponse));
 				    callback.onLoaded(mileStones);
 				
@@ -119,7 +119,7 @@ public class MileStoneLoader {
 		
 		private List<MileStone> loadMileStones(JSONObject graphResponse) throws JSONException {
 			Log.d(TAG, TAG + ".loadMileStones");
-			
+			Log.d(TAG, graphResponse.toString(4));
 			List<MileStone> milestones = new ArrayList<MileStone>();
 			
 			JSONArray events = graphResponse.names();

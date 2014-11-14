@@ -2,12 +2,17 @@ package com.martymarron.traveldiaryandroid;
 
 import android.app.Activity;
 import android.app.ListFragment;
+import android.content.Loader;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import com.martymarron.traveldiaryandroid.dummy.DummyStory;
+import com.martymarron.traveldiaryapi.Diary;
+import com.martymarron.traveldiaryapi.Request;
+import com.martymarron.traveldiaryapi.RequestAsyncTaskLoader;
 
 /**
  * A list fragment representing a list of Stories. This fragment also supports
@@ -19,6 +24,8 @@ import com.martymarron.traveldiaryandroid.dummy.DummyStory;
  * interface.
  */
 public class StoryListFragment extends ListFragment {
+	
+	private static final String TAG = "StoryListFragment";
 
 	/**
 	 * The serialization (saved instance state) Bundle key representing the
@@ -69,6 +76,31 @@ public class StoryListFragment extends ListFragment {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		Log.d(TAG, "onCreate");
+
+		Request.Callback<Diary[]> apiCallback = new Request.Callback<Diary[]>() {
+
+			@Override
+			public void onLoadFinished(Loader<Diary[]> loader, Diary[] data) {
+
+				ArrayAdapter<Diary> adapter = 
+                		new ArrayAdapter<Diary>(getActivity(),
+                				android.R.layout.simple_list_item_activated_1,
+                				android.R.id.text1, data);
+                setListAdapter(adapter);
+			}
+
+			@Override
+			public void onLoaderReset(Loader<Diary[]> loader) {
+				// TODO Auto-generated method stub
+			}
+		};
+		
+		
+		Request<Diary[]> request = 
+				new Request<Diary[]>(getActivity(), getLoaderManager(), "/diaries/", null, apiCallback, Diary[].class);
+		RequestAsyncTaskLoader<Diary[]> requestAsyncTaskLoader = new RequestAsyncTaskLoader<Diary[]>(request);
+		requestAsyncTaskLoader.execute();
 
 		// TODO: replace with a real list adapter.
 //		setListAdapter(new ArrayAdapter<DummyContent.DummyItem>(getActivity(),
@@ -153,4 +185,5 @@ public class StoryListFragment extends ListFragment {
 
 		mActivatedPosition = position;
 	}
+	
 }
