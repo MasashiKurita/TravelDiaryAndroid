@@ -41,6 +41,7 @@
         android:layout_alignRight="@+id/storyDescriptionText"
         android:layout_below="@+id/storyDescriptionText"
         android:layout_marginTop="63dp"
-        android:text="Create" />
+        android:text="Create"
+        android:onClick="initStory" />
 
 </RelativeLayout>

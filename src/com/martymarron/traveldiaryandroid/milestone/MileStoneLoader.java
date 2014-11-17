@@ -77,6 +77,11 @@ public class MileStoneLoader {
 	
 	public class MileStoneLoaderException extends Exception {
 		
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = -244762229336558044L;
+
 		public MileStoneLoaderException(Exception e) {
 			super(e);
 			Log.d(TAG, e.getLocalizedMessage());

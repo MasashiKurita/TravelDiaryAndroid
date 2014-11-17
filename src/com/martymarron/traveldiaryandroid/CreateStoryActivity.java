@@ -1,13 +1,23 @@
 package com.martymarron.traveldiaryandroid;
 
+import org.springframework.http.HttpMethod;
+
 import android.app.Activity;
 import android.app.Fragment;
+import android.content.Intent;
+import android.content.Loader;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.martymarron.traveldiaryapi.Diary;
+import com.martymarron.traveldiaryapi.Request;
+import com.martymarron.traveldiaryapi.RequestAsyncTaskLoader;
 
 public class CreateStoryActivity extends Activity {
 
@@ -39,6 +49,40 @@ public class CreateStoryActivity extends Activity {
 		}
 		return super.onOptionsItemSelected(item);
 	}
+	
+	public void initStory(View view) {
+		// TODO
+		Toast.makeText(this, "initStory", Toast.LENGTH_LONG).show();
+		
+		String path = "/diaries/";
+		Bundle params = new Bundle();
+		Diary diary = new Diary();
+		diary.setTitle(((TextView)findViewById(R.id.storyTitleText)).getText().toString());
+		diary.setDescription(((TextView)findViewById(R.id.storyDescriptionText)).getText().toString());
+		Request<Diary> request = 
+				new Request<>(this,  path, params, HttpMethod.POST, diary,
+				new Request.Callback<Diary>() {
+
+					@Override
+					public void onLoadFinished(Loader<Diary> loader, Diary data) {
+						Toast.makeText(CreateStoryActivity.this, "Created New Story\"" + data.getTitle() + "\"", Toast.LENGTH_LONG).show();
+						Intent intent = new Intent(CreateStoryActivity.this, StoryListActivity.class);
+						startActivity(intent);
+					}
+
+					@Override
+					public void onLoaderReset(Loader<Diary> loader) {
+						// TODO Auto-generated method stub
+						
+					}
+					
+				}, Diary.class);
+		
+		RequestAsyncTaskLoader<Diary> asyncTaskLoader = 
+				new RequestAsyncTaskLoader<Diary>(request);
+		asyncTaskLoader.execute(getLoaderManager());
+	}
+
 
 	/**
 	 * A placeholder fragment containing a simple view.

@@ -66,5 +66,5 @@ public class InitiationActivity extends ActionBarActivity {
 		Intent intent = new Intent(this, StoryListActivity.class);
 		startActivity(intent);
 	}
-	
+		
 }

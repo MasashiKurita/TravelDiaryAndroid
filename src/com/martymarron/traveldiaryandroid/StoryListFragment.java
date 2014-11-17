@@ -1,5 +1,7 @@
 package com.martymarron.traveldiaryandroid;
 
+import org.springframework.http.HttpMethod;
+
 import android.app.Activity;
 import android.app.ListFragment;
 import android.content.Loader;
@@ -24,7 +26,7 @@ import com.martymarron.traveldiaryapi.RequestAsyncTaskLoader;
  * interface.
  */
 public class StoryListFragment extends ListFragment {
-	
+		
 	private static final String TAG = "StoryListFragment";
 
 	/**
@@ -88,6 +90,7 @@ public class StoryListFragment extends ListFragment {
                 				android.R.layout.simple_list_item_activated_1,
                 				android.R.id.text1, data);
                 setListAdapter(adapter);
+        		
 			}
 
 			@Override
@@ -98,17 +101,17 @@ public class StoryListFragment extends ListFragment {
 		
 		
 		Request<Diary[]> request = 
-				new Request<Diary[]>(getActivity(), getLoaderManager(), "/diaries/", null, apiCallback, Diary[].class);
+				new Request<Diary[]>(getActivity(), "/diaries/", null, HttpMethod.GET, null, apiCallback, Diary[].class);
 		RequestAsyncTaskLoader<Diary[]> requestAsyncTaskLoader = new RequestAsyncTaskLoader<Diary[]>(request);
-		requestAsyncTaskLoader.execute();
+		requestAsyncTaskLoader.execute(getLoaderManager());
 
 		// TODO: replace with a real list adapter.
 //		setListAdapter(new ArrayAdapter<DummyContent.DummyItem>(getActivity(),
 //				android.R.layout.simple_list_item_activated_1,
 //				android.R.id.text1, DummyContent.ITEMS));
-		setListAdapter(new ArrayAdapter<DummyStory.DummyItem>(getActivity(),
-				android.R.layout.simple_list_item_activated_1,
-				android.R.id.text1, DummyStory.ITEMS));
+//		setListAdapter(new ArrayAdapter<DummyStory.DummyItem>(getActivity(),
+//				android.R.layout.simple_list_item_activated_1,
+//				android.R.id.text1, DummyStory.ITEMS));
 	}
 
 	@Override
