@@ -1,9 +1,8 @@
 package com.martymarron.traveldiaryandroid;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.app.Activity;
-
 import android.view.MenuItem;
 
 /**
@@ -15,7 +14,9 @@ import android.view.MenuItem;
  * a {@link StoryDetailFragment}.
  */
 public class StoryDetailActivity extends Activity {
-
+	
+	private static final String TAG = "StoryDetailActivity";
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -59,6 +60,8 @@ public class StoryDetailActivity extends Activity {
 			navigateUpTo(new Intent(this, StoryListActivity.class));
 			return true;
 		}
+
 		return super.onOptionsItemSelected(item);
 	}
+
 }

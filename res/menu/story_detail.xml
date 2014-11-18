@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.martymarron.traveldiaryandroid.StoryDetailFragment"  >
+    <item android:id="@+id/item_edit_story" 
+          android:title="Edit" 
+          android:showAsAction="never"/>
+    <item android:id="@+id/item_add_milestone"
+          android:title="Add Miles Stone"
+          android:showAsAction="never"
+          />
+    <item android:id="@+id/item_delete_story" 
+          android:title="Delete"
+          android:showAsAction="never"/>
+    
+
+</menu>

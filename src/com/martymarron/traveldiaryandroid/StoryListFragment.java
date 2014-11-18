@@ -11,7 +11,6 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
-import com.martymarron.traveldiaryandroid.dummy.DummyStory;
 import com.martymarron.traveldiaryapi.Diary;
 import com.martymarron.traveldiaryapi.Request;
 import com.martymarron.traveldiaryapi.RequestAsyncTaskLoader;
@@ -148,14 +147,17 @@ public class StoryListFragment extends ListFragment {
 	}
 
 	@Override
-	public void onListItemClick(ListView listView, View view, int position,
-			long id) {
+	public void onListItemClick(ListView listView, View view, int position, long id) {
 		super.onListItemClick(listView, view, position, id);
 
 		// Notify the active callbacks interface (the activity, if the
 		// fragment is attached to one) that an item has been selected.
 //		mCallbacks.onItemSelected(DummyContent.ITEMS.get(position).id);
-		mCallbacks.onItemSelected(DummyStory.ITEMS.get(position).id);
+		Log.d(TAG, "onListItemClick: position=" + String.valueOf(position) + ", id=" + String.valueOf(id));
+		Log.d(TAG, getListAdapter().getItem(position).toString());
+		Diary diary = (Diary)getListAdapter().getItem(position);
+		mCallbacks.onItemSelected(String.valueOf(diary.getId()));
+		//mCallbacks.onItemSelected(DummyStory.ITEMS.get(position).id);
 	}
 
 	@Override
