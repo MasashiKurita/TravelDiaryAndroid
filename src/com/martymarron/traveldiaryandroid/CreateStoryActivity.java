@@ -7,6 +7,7 @@ import android.app.Fragment;
 import android.content.Intent;
 import android.content.Loader;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -15,20 +16,50 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.facebook.Session;
+import com.facebook.SessionState;
+import com.facebook.model.GraphUser;
 import com.martymarron.traveldiaryapi.Diary;
 import com.martymarron.traveldiaryapi.Request;
 import com.martymarron.traveldiaryapi.RequestAsyncTaskLoader;
+import com.martymarron.traveldiaryapi.Response;
 
 public class CreateStoryActivity extends Activity {
 
+	private static final String TAG = "CreateStoryActivity";
+	
+	private String userId;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_create_story);
 		if (savedInstanceState == null) {
-			getFragmentManager().beginTransaction()
-					.add(R.id.container, new PlaceholderFragment()).commit();
+			getFragmentManager().beginTransaction().add(R.id.container, new PlaceholderFragment()).commit();
 		}
+		
+		Session.openActiveSession(this, true, new Session.StatusCallback() {
+			
+			@Override
+			public void call(Session session, SessionState state, Exception exception) {
+				if (session.isOpened()) {
+				
+				    // make request to the /me API
+				    Log.d(TAG, "make request to the /me API");
+				    com.facebook.Request.newMeRequest(session, new com.facebook.Request.GraphUserCallback() {
+					
+					    // call back after Graph API response with user object
+					    @Override
+				 	    public void onCompleted(GraphUser user, com.facebook.Response response) {
+						    Log.d(TAG, "newMeRequest#onCompleted");
+						    if (user != null) {
+							    CreateStoryActivity.this.userId = user.getId();
+						    }	
+					    }
+				    }).executeAsync();
+			    }
+			}
+		});
 	}
 
 	@Override
@@ -51,22 +82,23 @@ public class CreateStoryActivity extends Activity {
 	}
 	
 	public void initStory(View view) {
-		// TODO
-		Toast.makeText(this, "initStory", Toast.LENGTH_LONG).show();
-		
+
 		String path = "/diaries/";
 		Bundle params = new Bundle();
 		Diary diary = new Diary();
+		diary.setUserId(userId);
 		diary.setTitle(((TextView)findViewById(R.id.storyTitleText)).getText().toString());
 		diary.setDescription(((TextView)findViewById(R.id.storyDescriptionText)).getText().toString());
 		Request<Diary> request = 
-				new Request<>(this,  path, params, HttpMethod.POST, diary,
+				new Request<>(this, path, params, HttpMethod.POST, diary,
 				new Request.Callback<Diary>() {
 
 					@Override
-					public void onLoadFinished(Loader<Diary> loader, Diary data) {
+					public void onLoadFinished(Response<Diary> response) {
+						Diary data = response.getBody();
 						Toast.makeText(CreateStoryActivity.this, "Created New Story\"" + data.getTitle() + "\"", Toast.LENGTH_LONG).show();
-						Intent intent = new Intent(CreateStoryActivity.this, StoryListActivity.class);
+						Intent intent = new Intent(CreateStoryActivity.this, StoryDetailActivity.class);
+						intent.putExtra(StoryDetailFragment.ARG_ITEM_ID, String.valueOf(data.getId()));
 						startActivity(intent);
 					}
 

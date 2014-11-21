@@ -15,10 +15,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.martymarron.traveldiaryandroid.dummy.DummyContent;
 import com.martymarron.traveldiaryapi.Diary;
 import com.martymarron.traveldiaryapi.Request;
 import com.martymarron.traveldiaryapi.RequestAsyncTaskLoader;
+import com.martymarron.traveldiaryapi.Response;
 
 /**
  * A fragment representing a single Story detail screen. This fragment is either
@@ -38,7 +38,6 @@ public class StoryDetailFragment extends Fragment {
 	/**
 	 * The dummy content this fragment is presenting.
 	 */
-	private DummyContent.DummyItem mItem;
 	
 	private Diary diary;
 	
@@ -60,18 +59,16 @@ public class StoryDetailFragment extends Fragment {
 			// Load the dummy content specified by the fragment
 			// arguments. In a real-world scenario, use a Loader
 			// to load content from a content provider.
-			mItem = DummyContent.ITEM_MAP.get(getArguments().getString(
-					ARG_ITEM_ID));
 			String path = "/diaries/" + getArguments().getString(ARG_ITEM_ID) + "/";
 			Request<Diary> request = new Request<Diary>(getActivity(), path, null, HttpMethod.GET, null,
 				new Request.Callback<Diary>() {
 
 					@Override
-					public void onLoadFinished(Loader<Diary> loader, Diary data) {
+					public void onLoadFinished(Response<Diary> response) {
+						Diary data = response.getBody();
 						if (data != null) {
 						    Log.d(TAG, data.toString());
-						    ((TextView) getView().findViewById(R.id.story_detail))
-						    .setText(data.toString());
+						    ((TextView) getView().findViewById(R.id.story_detail)).setText(data.toString());
 						    diary = data;
 						}
 
@@ -92,30 +89,21 @@ public class StoryDetailFragment extends Fragment {
 	}
 
 	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container,
-			Bundle savedInstanceState) {
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View rootView = inflater.inflate(R.layout.fragment_story_detail,
 				container, false);
-
-		// Show the dummy content as text in a TextView.
-//		if (mItem != null) {
-//			((TextView) rootView.findViewById(R.id.story_detail))
-//					.setText(mItem.content);
-//		}
 
 		return rootView;
 	}
 
 	@Override
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-		// TODO Auto-generated method stub
 		inflater.inflate(R.menu.story_detail, menu);
 		super.onCreateOptionsMenu(menu, inflater);
 	}
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		// TODO Auto-generated method stub
 		
 		int id = item.getItemId();
 		

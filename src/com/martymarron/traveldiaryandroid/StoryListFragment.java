@@ -14,6 +14,7 @@ import android.widget.ListView;
 import com.martymarron.traveldiaryapi.Diary;
 import com.martymarron.traveldiaryapi.Request;
 import com.martymarron.traveldiaryapi.RequestAsyncTaskLoader;
+import com.martymarron.traveldiaryapi.Response;
 
 /**
  * A list fragment representing a list of Stories. This fragment also supports
@@ -82,7 +83,8 @@ public class StoryListFragment extends ListFragment {
 		Request.Callback<Diary[]> apiCallback = new Request.Callback<Diary[]>() {
 
 			@Override
-			public void onLoadFinished(Loader<Diary[]> loader, Diary[] data) {
+			public void onLoadFinished(Response<Diary[]> response) {
+				Diary[] data = response.getBody();
 
 				ArrayAdapter<Diary> adapter = 
                 		new ArrayAdapter<Diary>(getActivity(),
@@ -104,13 +106,6 @@ public class StoryListFragment extends ListFragment {
 		RequestAsyncTaskLoader<Diary[]> requestAsyncTaskLoader = new RequestAsyncTaskLoader<Diary[]>(request);
 		requestAsyncTaskLoader.execute(getLoaderManager());
 
-		// TODO: replace with a real list adapter.
-//		setListAdapter(new ArrayAdapter<DummyContent.DummyItem>(getActivity(),
-//				android.R.layout.simple_list_item_activated_1,
-//				android.R.id.text1, DummyContent.ITEMS));
-//		setListAdapter(new ArrayAdapter<DummyStory.DummyItem>(getActivity(),
-//				android.R.layout.simple_list_item_activated_1,
-//				android.R.id.text1, DummyStory.ITEMS));
 	}
 
 	@Override
