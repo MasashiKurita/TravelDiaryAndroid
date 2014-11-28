@@ -21,5 +21,6 @@
     <string name="resume_story">Resume Story</string>
     <string name="app_id">698356506895047</string>
     <string name="title_activity_story_edit">Edit</string>
+    <string name="title_activity_add_milestone">AddMilestoneActivity</string>
 
 </resources>

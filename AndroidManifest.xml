@@ -100,6 +100,14 @@
             android:name=".StoryEditActivity"
             android:label="@string/title_activity_story_edit" >
         </activity>
+        <activity
+            android:name=".AddMileStoneActivity"
+            android:label="@string/title_activity_add_milestone"
+            android:parentActivityName=".StoryDetailActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.martymarron.traveldiaryandroid.StoryDetailActivity" />
+        </activity>
     </application>
 
 </manifest>
