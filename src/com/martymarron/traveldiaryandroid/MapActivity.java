@@ -2,20 +2,30 @@ package com.martymarron.traveldiaryandroid;
 
 import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.List;
 import java.util.TimeZone;
+
+import org.springframework.http.HttpMethod;
 
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.FragmentTransaction;
+import android.content.Intent;
+import android.content.Loader;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
+import com.facebook.Session;
+import com.facebook.model.GraphLocation;
+import com.facebook.model.GraphPlace;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
@@ -26,6 +36,10 @@ import com.google.android.gms.maps.model.PolylineOptions;
 import com.martymarron.traveldiaryandroid.milestone.MileStone;
 import com.martymarron.traveldiaryandroid.milestone.MileStoneLoader;
 import com.martymarron.traveldiaryandroid.milestone.MileStoneLoader.MileStoneLoaderException;
+import com.martymarron.traveldiaryapi.Diary;
+import com.martymarron.traveldiaryapi.Request;
+import com.martymarron.traveldiaryapi.RequestAsyncTaskLoader;
+import com.martymarron.traveldiaryapi.Response;
 
 public class MapActivity extends Activity implements
 		NavigationDrawerFragment.NavigationDrawerCallbacks {
@@ -49,7 +63,12 @@ public class MapActivity extends Activity implements
 	 * {@link #restoreActionBar()}.
 	 */
 	private CharSequence mTitle;
-			
+	
+	private Diary diary;
+	
+	private static final int ADD_MILESTONE_ACTIVITY = 1;
+
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -63,18 +82,41 @@ public class MapActivity extends Activity implements
 
 		mNavigationDrawerFragment.setUp(R.id.navigation_drawer,
 				(DrawerLayout) findViewById(R.id.drawer_layout));
-		
+
 	}
 
 	@Override
 	public void onNavigationDrawerItemSelected(int position) {
 		Log.d(TAG, "MapActivity.onNavigationDrawerItemSelected");
 		
+		List<com.martymarron.traveldiaryapi.Diary.MileStone> msList = new ArrayList<>();
+		if (getIntent().getSerializableExtra(StoryDetailFragment.ARG_ITEM_NAME) instanceof Diary) {
+		    diary = (Diary)getIntent().getSerializableExtra(StoryDetailFragment.ARG_ITEM_NAME);
+		    msList = diary.getMilestones();
+		}
+
+		
 		mMapFragment = (MapFragment) getFragmentManager().findFragmentByTag(MAP_FRAGMENT_TAG);
 		if (mMapFragment == null) {
 			mMapFragment = MapFragment.newInstance();
 			
 			// load and initialize map if first fragment created
+			String key = "ids";
+
+			StringBuilder sb = new StringBuilder();
+			for (int i=0; i<msList.size(); i++) {
+				String str = msList.get(i).getPageId();
+				sb.append(str);
+				
+				if (i < msList.size()-1) {
+				  sb.append(",");
+				}
+			}
+			String value = sb.toString();
+
+			Bundle param = new Bundle();
+			param.putString(key, value);
+			
 			final int pos = position;
 			msLoader = new MileStoneLoader(new MileStoneLoader.MileStoneLoaderCallback() {
 												
@@ -91,10 +133,13 @@ public class MapActivity extends Activity implements
 				        MarkerOptions options = new MarkerOptions();
 					    options.position(location);
 					    options.title(mileStone.getLocation());
-					    Calendar updatedTime = 
-					    		Calendar.getInstance(TimeZone.getTimeZone(mileStone.getTimezone()));
-					    updatedTime.setTime(mileStone.getUpdatedTime());
-					    options.snippet(DateFormat.getInstance().format(updatedTime.getTime()));
+					    
+					    if (mileStone.getTimezone() != null) {
+					        Calendar updatedTime = 
+					        		Calendar.getInstance(TimeZone.getTimeZone(mileStone.getTimezone()));
+					        updatedTime.setTime(mileStone.getUpdatedTime());
+					        options.snippet(DateFormat.getInstance().format(updatedTime.getTime()));
+					    }
 					    
 					    mMap.addMarker(options);
 					    titleList.add(mileStone.getName() + " at " + mileStone.getLocation());
@@ -117,7 +162,7 @@ public class MapActivity extends Activity implements
 					
 					mNavigationDrawerFragment.updateListAdapter(titleList);
 				}
-			});
+			}, param);
 				
 			try {
 			    msLoader.load();
@@ -182,7 +227,137 @@ public class MapActivity extends Activity implements
 		if (id == R.id.action_settings) {
 			return true;
 		}
+		if (id == R.id.action_add) {
+			Intent intent = new Intent(this, AddMileStoneActivity.class);
+			intent.putExtra(StoryDetailFragment.ARG_ITEM_NAME, diary);
+			startActivityForResult(intent, 	ADD_MILESTONE_ACTIVITY);
+		}
 		return super.onOptionsItemSelected(item);
 	}
+	
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		// TODO Auto-generated method stub
+//		super.onActivityResult(requestCode, resultCode, data);
+		if (requestCode == ADD_MILESTONE_ACTIVITY) {
+			displaySelectedPlace(resultCode);
+		}
+	}
+	
+    private void displaySelectedPlace(int resultCode) {
+    	
+    	String results = "";
+        AddMileStoneApplication application = (AddMileStoneApplication) getApplication();
+
+        GraphPlace selection = application.getSelectedPlace();
+        
+        if (selection != null) {
+            GraphLocation location = selection.getLocation();
+
+            results = String.format("ID: %s\nName: %s\nCategory: %s\nLocation: (%f,%f)\nStreet: %s, %s, %s, %s, %s",
+                    selection.getId(),
+            		selection.getName(), selection.getCategory(),
+                    location.getLatitude(), location.getLongitude(),
+                    location.getStreet(), location.getCity(), location.getState(), location.getZip(),
+                    location.getCountry());
+
+        	publishEvent(selection);
+            
+            //addMilestone(selection);
+            
+        } else {
+            results = "<No place selected>";
+        }
+
+        Log.d(TAG, results);
+
+    }
+    
+	private boolean isSubsetOf(Collection<String> subset, Collection<String> superset) {
+		for (String string : subset) {
+			if (!superset.contains(string)) {
+				return false;
+			}
+		}
+		return true;
+	}
+    
+    public void publishEvent(GraphPlace graphPlace) {
+    	
+		Session session = Session.getActiveSession();
+		
+		if (session != null) {
+			
+			// Check for publish permissions
+			List<String> permissions = session.getPermissions();
+			List<String> pubperms = Arrays.asList("publish_actions", "manage_pages");
+			if (!isSubsetOf(pubperms, permissions)) {
+				Session.NewPermissionsRequest newPermissionsRequest = 
+						new Session.NewPermissionsRequest(this, "publish_actions", "manage_pages");
+				session.requestNewPublishPermissions(newPermissionsRequest);
+				return;
+			}
+		}
+
+    	
+    	Session.getActiveSession()
+    	.requestNewPublishPermissions(new Session.NewPermissionsRequest(this, Arrays.asList("publish_actions", "manage_pages")));
+    	
+    	String graphPath = "/" + this.getString(R.string.app_page_id)  +"/feed";
+    	
+		Bundle param = new Bundle();
+		param.putString("message", "Test Msg");
+		param.putString("place", graphPlace.getId());
+    	
+		msLoader = new MileStoneLoader(new MileStoneLoader.MileStoneLoaderCallback() {
+			
+			@Override
+			public void onLoaded(List<MileStone> milestones) {
+				
+			}
+		}, param, graphPath);
+			
+		try {
+			
+		    msLoader.publish();
+		} catch (MileStoneLoaderException e) {
+			Log.e(TAG, e.getMessage());
+		}
+    	
+    }
+    
+    public void addMilestone(GraphPlace graphPlace) {
+		String path = "/milestones/";
+		Bundle params = new Bundle();
+
+		com.martymarron.traveldiaryapi.Diary.MileStone milestone = 
+				new com.martymarron.traveldiaryapi.Diary.MileStone();
+		milestone.setPageId(graphPlace.getId());
+		milestone.setDiary(diary.getId());
+
+		Request<com.martymarron.traveldiaryapi.Diary.MileStone> request = 
+				new Request<>(this, path, params, HttpMethod.POST, milestone,
+				new Request.Callback<com.martymarron.traveldiaryapi.Diary.MileStone>() {
+
+					@Override
+					public void onLoadFinished(Response<com.martymarron.traveldiaryapi.Diary.MileStone> response) {
+						com.martymarron.traveldiaryapi.Diary.MileStone data = response.getBody();
+						Toast.makeText(MapActivity.this, "Created New Story\"" + data.getPageId() + "\"", Toast.LENGTH_LONG).show();
+					}
+
+					@Override
+					public void onLoaderReset(Loader<com.martymarron.traveldiaryapi.Diary.MileStone> loader) {
+						// TODO Auto-generated method stub
+						
+					}
+					
+				}, com.martymarron.traveldiaryapi.Diary.MileStone.class);
+		
+		RequestAsyncTaskLoader<com.martymarron.traveldiaryapi.Diary.MileStone> asyncTaskLoader = 
+				new RequestAsyncTaskLoader<com.martymarron.traveldiaryapi.Diary.MileStone>(request);
+		asyncTaskLoader.execute(getLoaderManager());
+    	
+    }
+
 	
 }

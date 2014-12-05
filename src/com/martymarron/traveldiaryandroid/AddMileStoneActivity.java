@@ -74,6 +74,7 @@ public class AddMileStoneActivity extends FragmentActivity {
 	}
 
 	private void finishActivity() {
+		Log.d(TAG, getApplication().toString());
 		AddMileStoneApplication application = (AddMileStoneApplication) getApplication();
 		application.setSelectedPlace(placePickerFragment.getSelection());
 		

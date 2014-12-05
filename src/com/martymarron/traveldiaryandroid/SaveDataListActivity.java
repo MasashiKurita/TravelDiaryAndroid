@@ -1,8 +1,5 @@
 package com.martymarron.traveldiaryandroid;
 
-import java.util.Arrays;
-import java.util.List;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
@@ -35,7 +32,8 @@ public class SaveDataListActivity extends FragmentActivity implements
 	
 	private static final String TAG = "SaveDataList";
 	
-	private static final List<String> PERMISSIONS = Arrays.asList("user_activities", "user_events", "user_location", "user_status");
+//	private static final List<String> PERMISSIONS = Arrays.asList("user_activities", "user_events", "user_location", "user_status");
+//	private final List<String> PERMISSIONS;
 	private static final String PENDING_PUBLISH_KEY = "pendingPublishReauthorization";
 
 	private UiLifecycleHelper uiHelper;
@@ -67,7 +65,7 @@ public class SaveDataListActivity extends FragmentActivity implements
 		Session session = Session.getActiveSession();
 		if (!session.isOpened() && !session.isClosed()) {
 			session.openForRead(new Session.OpenRequest(this)
-			.setPermissions(PERMISSIONS)
+			.setPermissions(getResources().getStringArray(R.array.app_permissions))
 			.setCallback(sessionStateCallback));
 		} else {
 			Session.openActiveSession(this, true, sessionStateCallback);

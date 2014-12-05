@@ -9,8 +9,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -23,6 +23,10 @@ import com.facebook.Request;
 import com.facebook.RequestAsyncTask;
 import com.facebook.Response;
 import com.facebook.Session;
+import com.facebook.model.GraphLocation;
+import com.facebook.model.GraphObject;
+import com.facebook.model.GraphObject.Factory;
+import com.facebook.model.GraphPlace;
 
 /**
  * @author x-masashik
@@ -34,14 +38,24 @@ public class MileStoneLoader {
 
 	private MyRequestCallback callback;
 	
+	private Bundle param;
+	
+	private String graphPath = "";
+	
 	private List<MileStone> mileStones;
 	
 	private MileStoneLoader() {
 	}
 	
-	public MileStoneLoader(MileStoneLoaderCallback mscallback) {
+	public MileStoneLoader(MileStoneLoaderCallback mscallback, Bundle param) {
+		this(mscallback, param, "");
+	}
+	
+	public MileStoneLoader(MileStoneLoaderCallback mscallback, Bundle param, String graphpath) {
 		this();
 		callback = new MyRequestCallback(mscallback);
+		this.graphPath = graphpath;
+		this.param = param;
 	}
 	
 	public void load() throws MileStoneLoaderException {
@@ -52,11 +66,31 @@ public class MileStoneLoader {
 		
 		    if (session != null) {
 
-			    Bundle param = new Bundle();
-			    param.putString("locale", Locale.getDefault().toString());
-			    param.putString("ids", "293823777472129,944207338929355,629132557185394,1407160042867804");
-			    Request request = new Request(session, "", param, HttpMethod.GET, callback);
-			    Log.d(TAG, "start get venues");
+			    Bundle parameter = new Bundle(this.param);
+			    parameter.putString("locale", Locale.getDefault().toString());
+			    Request request = new Request(session, graphPath, parameter, HttpMethod.GET, callback);
+			    Log.d(TAG, request.toString());
+			
+			    RequestAsyncTask task = new RequestAsyncTask(request);
+			    task.execute();
+		    }
+		} catch (Exception e) {
+			throw new MileStoneLoaderException(e);
+		}
+	}
+	
+	public void publish() throws MileStoneLoaderException {
+		try {
+			
+		    Session session = Session.getActiveSession();
+		
+		    if (session != null) {
+
+			    Bundle parameter = new Bundle(this.param);
+			    parameter.putString("locale", Locale.getDefault().toString());
+			    Request request = 
+			    		new Request(session, graphPath, parameter, HttpMethod.POST, callback);
+			    Log.d(TAG, request.toString());
 			
 			    RequestAsyncTask task = new RequestAsyncTask(request);
 			    task.execute();
@@ -90,6 +124,8 @@ public class MileStoneLoader {
 		
 	private class MyRequestCallback implements Request.Callback {
 		
+		private static final String TAG = "MyRequestCallback";
+		
 		private MileStoneLoaderCallback callback;
 		
 		public MyRequestCallback(MileStoneLoaderCallback callback) {
@@ -107,13 +143,10 @@ public class MileStoneLoader {
 			} else {
 
 				Log.d(TAG, "start " + response.getRequest().getGraphPath());
-			    Log.d(TAG, "raw request=(" + response.getRequest().toString() + ")");
-				Log.d(TAG, "raw response=(" + response.getRawResponse() + ")");
+				
+				try {
 
-	            JSONObject graphResponse = response.getGraphObject().getInnerJSONObject();
-
-	            try {
-				    mileStones = new ArrayList<MileStone>(loadMileStones(graphResponse));
+				    mileStones = new ArrayList<MileStone>(loadMileStones(response.getGraphObject()));
 				    callback.onLoaded(mileStones);
 				
 			    } catch (JSONException e) {
@@ -122,37 +155,62 @@ public class MileStoneLoader {
 			}
 		}
 		
-		private List<MileStone> loadMileStones(JSONObject graphResponse) throws JSONException {
+		private List<MileStone> loadMileStones(GraphObject graphObject) throws JSONException {
 			Log.d(TAG, TAG + ".loadMileStones");
-			Log.d(TAG, graphResponse.toString(4));
+			
+			Log.d(TAG, graphObject.toString());
+			Log.d(TAG, graphObject.asMap().keySet().toString());
+			
+			Map<String, Object> goMap = graphObject.asMap();
+
 			List<MileStone> milestones = new ArrayList<MileStone>();
-			
-			JSONArray events = graphResponse.names();
-			
-			for (int i=0; i<events.length(); i++) {
+			for (String key : goMap.keySet()) {
 		        MileStone ms = new MileStone();
 		        
-				JSONObject event = graphResponse.getJSONObject(events.getString(i));
-				ms.setName(event.getString("name"));
-				ms.setLocation(event.getString("location"));
-				ms.setTimezone(event.getString("timezone"));
-				try {
-					SimpleDateFormat stf = new SimpleDateFormat("yyyy-MM-dd");
-				    ms.setStartTime(stf.parse(event.getString("start_time")));
+		        Map<String, Object> map =
+		        		Factory.create(new JSONObject(goMap.get(key).toString())).asMap();
+		        
+		        if (map.containsKey("venue")) {
+		        
+		            ms.setName(map.get("name").toString());
+		            ms.setLocation(map.get("location").toString());
+		            ms.setTimezone(map.get("timezone").toString());
+				    try {
+					    SimpleDateFormat stf = new SimpleDateFormat("yyyy-MM-dd");
+				        ms.setStartTime(stf.parse(map.get("start_time").toString()));
 					
-					SimpleDateFormat utf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
-					ms.setUpdatedTime(utf.parse(event.getString("updated_time")));
-				} catch (ParseException e) {
-					Log.w(TAG, e.getMessage());
-				}
+					    SimpleDateFormat utf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
+					    ms.setUpdatedTime(utf.parse(map.get("updated_time").toString()));
+				    } catch (ParseException e) {
+					    Log.w(TAG, e.getMessage());
+				    }
 
-				JSONObject jsVenue = event.getJSONObject("venue");
-				MileStone.Venue venue = new MileStone.Venue();
-				venue.setLatitude(jsVenue.getDouble("latitude"));
-			    venue.setLongitude(jsVenue.getDouble("longitude"));
-				ms.setVenue(venue);
-				
-				milestones.add(ms);
+				    JSONObject json = new JSONObject(map.get("venue").toString());
+				    Log.d(TAG, json.toString(4));
+				    Map<String, Object> gvenue =
+						Factory.create(json).asMap();
+
+				    MileStone.Venue venue = new MileStone.Venue();
+			        venue.setLatitude(Double.valueOf(gvenue.get("latitude").toString()));
+		            venue.setLongitude(Double.valueOf(gvenue.get("longitude").toString()));
+			        ms.setVenue(venue);
+			        
+		        } else {
+				    JSONObject json = new JSONObject(goMap.get(key).toString());
+				    Log.d(TAG, json.toString(4));
+		        	GraphPlace gPlace = 
+		        			Factory.create(json, GraphPlace.class);
+		        	ms.setName(gPlace.getName());
+
+		        	GraphLocation gLocation = gPlace.getLocation();
+		        	
+		        	MileStone.Venue venue = new MileStone.Venue();
+		        	venue.setLatitude(gLocation.getLatitude());
+		        	venue.setLongitude(gLocation.getLongitude());
+		        	ms.setVenue(venue);
+		        }
+			
+			    milestones.add(ms);
 			}
 
 			Collections.sort(milestones);

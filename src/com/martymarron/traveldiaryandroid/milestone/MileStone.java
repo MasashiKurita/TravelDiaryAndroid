@@ -135,7 +135,13 @@ public class MileStone implements Comparable<MileStone> {
 
 	@Override
 	public int compareTo(MileStone another) {
-		return this.updatedTime.compareTo(another.updatedTime);
+		int result;
+		if (this.updatedTime != null) {
+			result = this.updatedTime.compareTo(another.updatedTime);
+		} else {
+			result = this.name.compareTo(another.name);
+		}
+		return result;
 	}
 	
 }

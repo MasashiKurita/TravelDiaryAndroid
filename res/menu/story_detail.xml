@@ -6,7 +6,7 @@
           android:title="Edit" 
           android:showAsAction="never"/>
     <item android:id="@+id/item_add_milestone"
-          android:title="Add Miles Stone"
+          android:title="@string/action_add_milestone"
           android:showAsAction="never"
           />
     <item android:id="@+id/item_delete_story" 

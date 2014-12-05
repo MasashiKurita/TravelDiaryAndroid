@@ -121,9 +121,10 @@ public class StoryDetailFragment extends Fragment {
 		
 		if (id == R.id.item_add_milestone) {
 
-			Intent intent = new Intent(getActivity(), AddMileStoneActivity.class);
+			Intent intent = new Intent(getActivity(), MapActivity.class);
 			intent.putExtra(ARG_ITEM_NAME, diary);
-			startActivityForResult(intent, ADD_MILESTONE_ACTIVITY);
+			startActivity(intent);
+			//startActivityForResult(intent, ADD_MILESTONE_ACTIVITY);
 		}
 		
 		if (id == R.id.item_delete_story) {
