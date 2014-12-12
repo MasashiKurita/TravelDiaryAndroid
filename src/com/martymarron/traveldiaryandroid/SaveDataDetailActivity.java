@@ -17,7 +17,7 @@ import android.view.View;
  * a {@link SaveDataDetailFragment}.
  */
 public class SaveDataDetailActivity extends ActionBarActivity {
-
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -46,6 +46,7 @@ public class SaveDataDetailActivity extends ActionBarActivity {
 			getSupportFragmentManager().beginTransaction()
 					.add(R.id.savedata_detail_container, fragment).commit();
 		}
+		
 	}
 
 	@Override

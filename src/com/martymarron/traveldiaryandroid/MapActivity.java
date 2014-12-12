@@ -24,7 +24,8 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.facebook.Session;
-import com.facebook.model.GraphLocation;
+import com.facebook.SessionState;
+import com.facebook.UiLifecycleHelper;
 import com.facebook.model.GraphPlace;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -67,6 +68,36 @@ public class MapActivity extends Activity implements
 	private Diary diary;
 	
 	private static final int ADD_MILESTONE_ACTIVITY = 1;
+	
+	private static final String PENDING_PUBLISH_KEY = "pendingPublishReauthorization";
+	
+	boolean pendingPublishReauthorization = false;
+
+	private UiLifecycleHelper uiHelper;
+
+	private Session.StatusCallback sessionStateCallback = new Session.StatusCallback() {
+		
+		@Override
+		public void call(Session session, SessionState state, Exception exception) {
+			Log.i(TAG, "StatusCallback.call");
+			onSessionStateChange(session, state, exception);
+		}
+	};
+
+	private void onSessionStateChange(Session session, SessionState state, Exception exception) {
+		if (state.isOpened()) {
+			Log.i(TAG, "Publish permissions Approved...");
+			
+			if (pendingPublishReauthorization
+		     && state.equals(SessionState.OPENED_TOKEN_UPDATED)) {
+				pendingPublishReauthorization = false;
+	        	publishEvent();
+			}
+		} else if (state.isClosed()) {
+			Log.i(TAG, "Session closed...");
+		}
+	}
+
 
 	
 	@Override
@@ -82,6 +113,13 @@ public class MapActivity extends Activity implements
 
 		mNavigationDrawerFragment.setUp(R.id.navigation_drawer,
 				(DrawerLayout) findViewById(R.id.drawer_layout));
+
+		uiHelper = new UiLifecycleHelper(this, sessionStateCallback);
+		uiHelper.onCreate(savedInstanceState);
+
+		if (savedInstanceState != null) {
+			pendingPublishReauthorization = savedInstanceState.getBoolean(PENDING_PUBLISH_KEY, false);
+		}
 
 	}
 
@@ -162,6 +200,10 @@ public class MapActivity extends Activity implements
 					
 					mNavigationDrawerFragment.updateListAdapter(titleList);
 				}
+				
+				@Override
+				public void onPublished(String postId) {}
+				
 			}, param);
 				
 			try {
@@ -237,42 +279,74 @@ public class MapActivity extends Activity implements
 	
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-		// TODO Auto-generated method stub
 //		super.onActivityResult(requestCode, resultCode, data);
 		if (requestCode == ADD_MILESTONE_ACTIVITY) {
-			displaySelectedPlace(resultCode);
+			publishEvent();
+//			displaySelectedPlace(resultCode);
 		}
+		uiHelper.onActivityResult(requestCode, resultCode, data);
 	}
 	
-    private void displaySelectedPlace(int resultCode) {
-    	
-    	String results = "";
-        AddMileStoneApplication application = (AddMileStoneApplication) getApplication();
+	@Override
+	public void onResume() {
+		super.onResume();
+		uiHelper.onResume();
+	};
+	
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
+		uiHelper.onDestroy();
+	};
+	
+	@Override
+	public void onPause() {
+		super.onPause();
+		uiHelper.onPause();
+	};
+	
+	
+    @Override
+	protected void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+		outState.putBoolean(PENDING_PUBLISH_KEY, pendingPublishReauthorization);
+		uiHelper.onSaveInstanceState(outState);
+	}
 
-        GraphPlace selection = application.getSelectedPlace();
-        
-        if (selection != null) {
-            GraphLocation location = selection.getLocation();
-
-            results = String.format("ID: %s\nName: %s\nCategory: %s\nLocation: (%f,%f)\nStreet: %s, %s, %s, %s, %s",
-                    selection.getId(),
-            		selection.getName(), selection.getCategory(),
-                    location.getLatitude(), location.getLongitude(),
-                    location.getStreet(), location.getCity(), location.getState(), location.getZip(),
-                    location.getCountry());
-
-        	publishEvent(selection);
-            
-            //addMilestone(selection);
-            
-        } else {
-            results = "<No place selected>";
-        }
-
-        Log.d(TAG, results);
-
-    }
     
+	@Override
+	protected void onStop() {
+		super.onStop();
+		uiHelper.onStop();
+	}
+
+
+
+//	private void displaySelectedPlace(int resultCode) {
+//    	
+//    	String results = "";
+//        AddMileStoneApplication application = (AddMileStoneApplication) getApplication();
+//
+//        GraphPlace selection = application.getSelectedPlace();
+//        
+//        if (selection != null) {
+//            GraphLocation location = selection.getLocation();
+//
+//            results = String.format("ID: %s\nName: %s\nCategory: %s\nLocation: (%f,%f)\nStreet: %s, %s, %s, %s, %s",
+//                    selection.getId(),
+//            		selection.getName(), selection.getCategory(),
+//                    location.getLatitude(), location.getLongitude(),
+//                    location.getStreet(), location.getCity(), location.getState(), location.getZip(),
+//                    location.getCountry());
+//            
+//        } else {
+//            results = "<No place selected>";
+//        }
+//
+//        Log.d(TAG, results);
+//
+//    }
+	
 	private boolean isSubsetOf(Collection<String> subset, Collection<String> superset) {
 		for (String string : subset) {
 			if (!superset.contains(string)) {
@@ -282,57 +356,64 @@ public class MapActivity extends Activity implements
 		return true;
 	}
     
-    public void publishEvent(GraphPlace graphPlace) {
-    	
-		Session session = Session.getActiveSession();
-		
-		if (session != null) {
-			
-			// Check for publish permissions
-			List<String> permissions = session.getPermissions();
-			List<String> pubperms = Arrays.asList("publish_actions", "manage_pages");
-			if (!isSubsetOf(pubperms, permissions)) {
-				Session.NewPermissionsRequest newPermissionsRequest = 
-						new Session.NewPermissionsRequest(this, "publish_actions", "manage_pages");
-				session.requestNewPublishPermissions(newPermissionsRequest);
-				return;
-			}
-		}
+    public void publishEvent() {
 
+        AddMileStoneApplication application = (AddMileStoneApplication) getApplication();
+        GraphPlace selection = application.getSelectedPlace();
     	
-    	Session.getActiveSession()
-    	.requestNewPublishPermissions(new Session.NewPermissionsRequest(this, Arrays.asList("publish_actions", "manage_pages")));
+    	Session session = Session.getActiveSession();
     	
+	    if (session != null && selection != null) {
+	    	List<String> PUBLISH_PERMISSIONS = 
+	    			Arrays.asList(getResources().getStringArray(R.array.app_permissions_publish));
+			List<String> permissions = session.getPermissions();
+			if (!isSubsetOf(PUBLISH_PERMISSIONS, permissions)) {
+				pendingPublishReauthorization = true;
+				Session.NewPermissionsRequest permRequest =
+						new Session.NewPermissionsRequest(this, PUBLISH_PERMISSIONS);
+	    	    session.requestNewPublishPermissions(permRequest);
+	    	    return;
+			}
+	    }
+    	    	
     	String graphPath = "/" + this.getString(R.string.app_page_id)  +"/feed";
     	
 		Bundle param = new Bundle();
 		param.putString("message", "Test Msg");
-		param.putString("place", graphPlace.getId());
+		
+		param.putString("place", selection.getId());
     	
 		msLoader = new MileStoneLoader(new MileStoneLoader.MileStoneLoaderCallback() {
 			
 			@Override
-			public void onLoaded(List<MileStone> milestones) {
-				
+			public void onPublished(String postId) {
+				addMilestone(postId);
 			}
+			
+			@Override
+			public void onLoaded(List<MileStone> milestones) {}
 		}, param, graphPath);
 			
 		try {
 			
 		    msLoader.publish();
+		    
 		} catch (MileStoneLoaderException e) {
 			Log.e(TAG, e.getMessage());
 		}
+		
+		// Clear selection
+		application.setSelectedPlace(null);
     	
     }
     
-    public void addMilestone(GraphPlace graphPlace) {
+    public void addMilestone(String id) {
 		String path = "/milestones/";
 		Bundle params = new Bundle();
 
 		com.martymarron.traveldiaryapi.Diary.MileStone milestone = 
 				new com.martymarron.traveldiaryapi.Diary.MileStone();
-		milestone.setPageId(graphPlace.getId());
+		milestone.setPageId(id);
 		milestone.setDiary(diary.getId());
 
 		Request<com.martymarron.traveldiaryapi.Diary.MileStone> request = 
@@ -359,5 +440,4 @@ public class MapActivity extends Activity implements
     	
     }
 
-	
 }

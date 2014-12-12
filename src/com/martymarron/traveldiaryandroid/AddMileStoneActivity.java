@@ -1,7 +1,5 @@
 package com.martymarron.traveldiaryandroid;
 
-import org.json.JSONException;
-
 import android.app.Fragment;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
@@ -26,6 +24,7 @@ public class AddMileStoneActivity extends FragmentActivity {
 	private static final String PICKER_FRAGMENT_TAG = "picker";
 	
 	private static final String TAG = "AddMilestoneActivity";
+	
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -58,11 +57,6 @@ public class AddMileStoneActivity extends FragmentActivity {
 
 			@Override
 			public boolean includeItem(GraphPlace graphObject) {
-				try {
-				    Log.d(TAG, graphObject.getInnerJSONObject().toString(4));
-				} catch (JSONException e) {
-					Log.e(TAG, e.getLocalizedMessage());
-				}
 				return true;
 			}
 		});
@@ -70,7 +64,7 @@ public class AddMileStoneActivity extends FragmentActivity {
 		FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
 		fragmentTransaction.replace(R.id.container, placePickerFragment, PICKER_FRAGMENT_TAG);
 		fragmentTransaction.commit();
-
+		
 	}
 
 	private void finishActivity() {

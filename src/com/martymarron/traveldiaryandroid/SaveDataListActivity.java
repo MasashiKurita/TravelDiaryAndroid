@@ -65,7 +65,7 @@ public class SaveDataListActivity extends FragmentActivity implements
 		Session session = Session.getActiveSession();
 		if (!session.isOpened() && !session.isClosed()) {
 			session.openForRead(new Session.OpenRequest(this)
-			.setPermissions(getResources().getStringArray(R.array.app_permissions))
+			.setPermissions(getResources().getStringArray(R.array.app_permissions_read))
 			.setCallback(sessionStateCallback));
 		} else {
 			Session.openActiveSession(this, true, sessionStateCallback);

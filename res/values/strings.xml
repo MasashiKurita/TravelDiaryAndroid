@@ -24,11 +24,15 @@
     <string name="action_example">Example action</string>
     <string name="action_add_milestone">add milestone</string>
     
-    <string-array name="app_permissions">
+    <string-array name="app_permissions_read">
         <item>user_activities</item>
         <item>user_events</item>
         <item>user_location</item>
         <item>user_status</item>
+    </string-array>
+    <string-array name="app_permissions_publish">
+        <item>publish_actions</item>
+        <item>manage_pages</item>
     </string-array>
 
 </resources>

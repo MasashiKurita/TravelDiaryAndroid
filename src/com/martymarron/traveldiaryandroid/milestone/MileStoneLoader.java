@@ -36,26 +36,25 @@ public class MileStoneLoader {
 	
 	private static final String TAG = "MileStoneLoader";
 
-	private MyRequestCallback callback;
+	private MileStoneLoaderCallback callback;
 	
 	private Bundle param;
 	
 	private String graphPath = "";
 	
 	private List<MileStone> mileStones;
+		
+	private MileStoneLoader() {}
 	
-	private MileStoneLoader() {
+	public MileStoneLoader(MileStoneLoaderCallback callback, Bundle param) {
+		this(callback, param, "");
 	}
 	
-	public MileStoneLoader(MileStoneLoaderCallback mscallback, Bundle param) {
-		this(mscallback, param, "");
-	}
-	
-	public MileStoneLoader(MileStoneLoaderCallback mscallback, Bundle param, String graphpath) {
+	public MileStoneLoader(MileStoneLoaderCallback callback, Bundle param, String graphpath) {
 		this();
-		callback = new MyRequestCallback(mscallback);
-		this.graphPath = graphpath;
+		this.callback = callback;
 		this.param = param;
+		this.graphPath = graphpath;
 	}
 	
 	public void load() throws MileStoneLoaderException {
@@ -68,7 +67,8 @@ public class MileStoneLoader {
 
 			    Bundle parameter = new Bundle(this.param);
 			    parameter.putString("locale", Locale.getDefault().toString());
-			    Request request = new Request(session, graphPath, parameter, HttpMethod.GET, callback);
+			    Request request = 
+			    		new Request(session, graphPath, parameter, HttpMethod.GET, new ReadRequestCallback(callback));
 			    Log.d(TAG, request.toString());
 			
 			    RequestAsyncTask task = new RequestAsyncTask(request);
@@ -84,17 +84,15 @@ public class MileStoneLoader {
 			
 		    Session session = Session.getActiveSession();
 		
-		    if (session != null) {
-
-			    Bundle parameter = new Bundle(this.param);
-			    parameter.putString("locale", Locale.getDefault().toString());
-			    Request request = 
-			    		new Request(session, graphPath, parameter, HttpMethod.POST, callback);
-			    Log.d(TAG, request.toString());
-			
-			    RequestAsyncTask task = new RequestAsyncTask(request);
-			    task.execute();
-		    }
+		    Bundle parameter = new Bundle(this.param);
+		    parameter.putString("locale", Locale.getDefault().toString());
+		    Request request = 
+		    		new Request(session, graphPath, parameter, HttpMethod.POST, new PublishRequestCallback(callback));
+		    Log.d(TAG, request.toString());
+		
+		    RequestAsyncTask task = new RequestAsyncTask(request);
+		    task.execute();
+		    
 		} catch (Exception e) {
 			throw new MileStoneLoaderException(e);
 		}
@@ -107,6 +105,18 @@ public class MileStoneLoader {
 	public interface MileStoneLoaderCallback {
 		
 		public void onLoaded(List<MileStone> milestones);
+		
+		public void onPublished(String postId);
+	}
+	
+	private abstract class MileStoneRequestCallback implements Request.Callback {
+		
+		protected MileStoneLoaderCallback callback;
+		
+		protected MileStoneRequestCallback(MileStoneLoaderCallback callback) {
+			this.callback = callback;
+		}
+		
 	}
 	
 	public class MileStoneLoaderException extends Exception {
@@ -121,15 +131,15 @@ public class MileStoneLoader {
 			Log.d(TAG, e.getLocalizedMessage());
 		}
 	}
+	
+	
+	
+	private class ReadRequestCallback extends MileStoneRequestCallback {
 		
-	private class MyRequestCallback implements Request.Callback {
-		
-		private static final String TAG = "MyRequestCallback";
-		
-		private MileStoneLoaderCallback callback;
-		
-		public MyRequestCallback(MileStoneLoaderCallback callback) {
-			this.callback = callback;
+		private static final String TAG = "ReadRequestCallback";
+				
+		public ReadRequestCallback(MileStoneLoaderCallback callback) {
+			super(callback);
 		}
 
 		@Override
@@ -146,6 +156,7 @@ public class MileStoneLoader {
 				
 				try {
 
+					Log.d(TAG, response.getRawResponse());
 				    mileStones = new ArrayList<MileStone>(loadMileStones(response.getGraphObject()));
 				    callback.onLoaded(mileStones);
 				
@@ -196,13 +207,15 @@ public class MileStoneLoader {
 			        ms.setVenue(venue);
 			        
 		        } else {
-				    JSONObject json = new JSONObject(goMap.get(key).toString());
+                    ms.setName(map.get("message").toString());
+
+                    JSONObject json = new JSONObject(map.get("place").toString());
 				    Log.d(TAG, json.toString(4));
 		        	GraphPlace gPlace = 
 		        			Factory.create(json, GraphPlace.class);
-		        	ms.setName(gPlace.getName());
-
+		        	
 		        	GraphLocation gLocation = gPlace.getLocation();
+		        	ms.setLocation(gPlace.getName());
 		        	
 		        	MileStone.Venue venue = new MileStone.Venue();
 		        	venue.setLatitude(gLocation.getLatitude());
@@ -215,6 +228,35 @@ public class MileStoneLoader {
 
 			Collections.sort(milestones);
 			return milestones;
+		}
+		
+	}
+	
+	private class PublishRequestCallback extends MileStoneRequestCallback {
+
+		private static final String TAG = "PublishRequestCallback";
+
+		public PublishRequestCallback(MileStoneLoaderCallback callback) {
+			super(callback);
+		}
+
+		@Override
+		public void onCompleted(Response response) {
+			FacebookRequestError error = response.getError();
+			if (error != null) {
+				
+				Log.e(TAG, error.getErrorMessage());
+				
+			} else {
+
+				Log.d(TAG, "start " + response.getRequest().getGraphPath());
+				
+			    Map<String, Object> map = response.getGraphObject().asMap();
+			    Log.d(TAG, map.toString());
+				callback.onPublished(map.get("id").toString());
+				
+			}
+			
 		}
 		
 	}
