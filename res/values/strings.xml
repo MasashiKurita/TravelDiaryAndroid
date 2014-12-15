@@ -29,6 +29,7 @@
         <item>user_events</item>
         <item>user_location</item>
         <item>user_status</item>
+        <item >read_stream</item>
     </string-array>
     <string-array name="app_permissions_publish">
         <item>publish_actions</item>

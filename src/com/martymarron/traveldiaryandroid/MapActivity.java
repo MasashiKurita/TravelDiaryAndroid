@@ -87,6 +87,7 @@ public class MapActivity extends Activity implements
 	private void onSessionStateChange(Session session, SessionState state, Exception exception) {
 		if (state.isOpened()) {
 			Log.i(TAG, "Publish permissions Approved...");
+			Log.i(TAG, "Access Token: "+ session.getAccessToken());
 			
 			if (pendingPublishReauthorization
 		     && state.equals(SessionState.OPENED_TOKEN_UPDATED)) {

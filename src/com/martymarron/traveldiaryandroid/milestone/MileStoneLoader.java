@@ -64,6 +64,7 @@ public class MileStoneLoader {
 		    Session session = Session.getActiveSession();
 		
 		    if (session != null) {
+		    	Log.d(TAG, "Access Token: " + session.getAccessToken());
 
 			    Bundle parameter = new Bundle(this.param);
 			    parameter.putString("locale", Locale.getDefault().toString());
@@ -84,15 +85,16 @@ public class MileStoneLoader {
 			
 		    Session session = Session.getActiveSession();
 		
-		    Bundle parameter = new Bundle(this.param);
-		    parameter.putString("locale", Locale.getDefault().toString());
-		    Request request = 
-		    		new Request(session, graphPath, parameter, HttpMethod.POST, new PublishRequestCallback(callback));
-		    Log.d(TAG, request.toString());
+		    if (session != null) {
+		        Bundle parameter = new Bundle(this.param);
+		        parameter.putString("locale", Locale.getDefault().toString());
+		        Request request = 
+		    	    	new Request(session, graphPath, parameter, HttpMethod.POST, new PublishRequestCallback(callback));
+		        Log.d(TAG, request.toString());
 		
-		    RequestAsyncTask task = new RequestAsyncTask(request);
-		    task.execute();
-		    
+		        RequestAsyncTask task = new RequestAsyncTask(request);
+		        task.execute();
+		    }
 		} catch (Exception e) {
 			throw new MileStoneLoaderException(e);
 		}
