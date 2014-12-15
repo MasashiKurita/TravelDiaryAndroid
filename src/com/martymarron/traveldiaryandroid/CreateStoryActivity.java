@@ -18,6 +18,7 @@ import android.widget.Toast;
 
 import com.facebook.Session;
 import com.facebook.SessionState;
+import com.facebook.UiLifecycleHelper;
 import com.facebook.model.GraphUser;
 import com.martymarron.traveldiaryapi.Diary;
 import com.martymarron.traveldiaryapi.Request;
@@ -30,58 +31,38 @@ public class CreateStoryActivity extends Activity {
 	
 	private String userId;
 	
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_create_story);
-		if (savedInstanceState == null) {
-			getFragmentManager().beginTransaction().add(R.id.container, new PlaceholderFragment()).commit();
+	private RequestAsyncTaskLoader<Diary> asyncTaskLoader;
+	
+	private UiLifecycleHelper uiHelper;
+	
+	private Session.StatusCallback sessionStatusCallback = new Session.StatusCallback() {
+
+		@Override
+		public void call(Session session, SessionState state, Exception exception) {
+			onSessionStateChange(session, state, exception);
 		}
-		
-		Session.openActiveSession(this, true, new Session.StatusCallback() {
+	};
+	
+	private void onSessionStateChange(Session session, SessionState state, Exception exception) {
+		if (session.isOpened()) {
 			
-			@Override
-			public void call(Session session, SessionState state, Exception exception) {
-				if (session.isOpened()) {
-				
-				    // make request to the /me API
-				    Log.d(TAG, "make request to the /me API");
-				    com.facebook.Request.newMeRequest(session, new com.facebook.Request.GraphUserCallback() {
-					
-					    // call back after Graph API response with user object
-					    @Override
-				 	    public void onCompleted(GraphUser user, com.facebook.Response response) {
-						    Log.d(TAG, "newMeRequest#onCompleted");
-						    if (user != null) {
-							    CreateStoryActivity.this.userId = user.getId();
-						    }	
-					    }
-				    }).executeAsync();
+		    // make request to the /me API
+		    Log.d(TAG, "make request to the /me API");
+		    com.facebook.Request.newMeRequest(session, new com.facebook.Request.GraphUserCallback() {
+			
+			    // call back after Graph API response with user object
+			    @Override
+		 	    public void onCompleted(GraphUser user, com.facebook.Response response) {
+				    Log.d(TAG, "newMeRequest#onCompleted");
+				    if (user != null) {
+					    CreateStoryActivity.this.userId = user.getId();
+				    }	
 			    }
-			}
-		});
-	}
-
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.create_story, menu);
-		return true;
-	}
-
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		// Handle action bar item clicks here. The action bar will
-		// automatically handle clicks on the Home/Up button, so long
-		// as you specify a parent activity in AndroidManifest.xml.
-		int id = item.getItemId();
-		if (id == R.id.action_settings) {
-			return true;
-		}
-		return super.onOptionsItemSelected(item);
+		    }).executeAsync();
+	    }
 	}
 	
-	public void initStory(View view) {
+	private void initLoader() {
 
 		String path = "/diaries/";
 		Bundle params = new Bundle();
@@ -110,9 +91,92 @@ public class CreateStoryActivity extends Activity {
 					
 				}, Diary.class);
 		
-		RequestAsyncTaskLoader<Diary> asyncTaskLoader = 
-				new RequestAsyncTaskLoader<Diary>(request);
-		asyncTaskLoader.execute(getLoaderManager());
+		asyncTaskLoader = 
+				new RequestAsyncTaskLoader<Diary>(request, getLoaderManager());
+		
+	}
+	
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.activity_create_story);
+		
+		
+        uiHelper = new UiLifecycleHelper(this, sessionStatusCallback);
+        uiHelper.onCreate(savedInstanceState);
+        
+        initLoader();
+		
+		if (savedInstanceState == null) {
+			getFragmentManager().beginTransaction().add(R.id.container, new PlaceholderFragment()).commit();
+		}
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		// Inflate the menu; this adds items to the action bar if it is present.
+		getMenuInflater().inflate(R.menu.create_story, menu);
+		return true;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		// Handle action bar item clicks here. The action bar will
+		// automatically handle clicks on the Home/Up button, so long
+		// as you specify a parent activity in AndroidManifest.xml.
+		int id = item.getItemId();
+		if (id == R.id.action_settings) {
+			return true;
+		}
+		return super.onOptionsItemSelected(item);
+	}
+	
+	public void initStory(View view) {
+
+		asyncTaskLoader.execute();
+	}
+
+
+	@Override
+	protected void onResume() {
+		// TODO Auto-generated method stub
+		super.onResume();
+		uiHelper.onResume();
+	}
+
+	@Override
+	protected void onSaveInstanceState(Bundle outState) {
+		// TODO Auto-generated method stub
+		super.onSaveInstanceState(outState);
+		uiHelper.onSaveInstanceState(outState);;
+	}
+
+	@Override
+	protected void onPause() {
+		// TODO Auto-generated method stub
+		super.onPause();
+		uiHelper.onPause();
+	}
+
+	@Override
+	protected void onStop() {
+		// TODO Auto-generated method stub
+		super.onStop();
+		uiHelper.onStop();
+	}
+
+	@Override
+	protected void onDestroy() {
+		// TODO Auto-generated method stub
+		super.onDestroy();
+		uiHelper.onDestroy();
+	}
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		// TODO Auto-generated method stub
+		super.onActivityResult(requestCode, resultCode, data);
+		uiHelper.onActivityResult(requestCode, resultCode, data);
 	}
 
 

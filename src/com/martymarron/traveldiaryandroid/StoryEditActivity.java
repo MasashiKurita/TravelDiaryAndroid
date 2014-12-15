@@ -33,49 +33,9 @@ public class StoryEditActivity extends Activity {
 	
 	private String diaryId;
 	
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		Log.d(TAG, "onCreate");
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_story_edit);
-		if (savedInstanceState == null) {
-			PlaceholderFragment fragment = new PlaceholderFragment();
-			
-			if (getIntent().getSerializableExtra(StoryDetailFragment.ARG_ITEM_NAME) instanceof Diary) {
-			    Bundle arguments = new Bundle();
-			    Diary diary = (Diary)getIntent().getSerializableExtra(StoryDetailFragment.ARG_ITEM_NAME);
-			    arguments.putSerializable(StoryDetailFragment.ARG_ITEM_NAME, diary);
-			    fragment.setArguments(arguments);
-			    
-			    diaryId = String.valueOf(diary.getId());
-			}
-			getFragmentManager().beginTransaction()
-					.add(R.id.container, fragment).commit();
-		}
-	}
-
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.story_edit, menu);
-		return true;
-	}
-
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		// Handle action bar item clicks here. The action bar will
-		// automatically handle clicks on the Home/Up button, so long
-		// as you specify a parent activity in AndroidManifest.xml.
-		int id = item.getItemId();
-		if (id == R.id.action_settings) {
-			return true;
-		}
-		return super.onOptionsItemSelected(item);
-	}
+	private RequestAsyncTaskLoader<Diary> asyncTaskLoader;
 	
-	public void saveStory(View view) {
-		Toast.makeText(this, "saveStory", Toast.LENGTH_LONG).show();
-		
+	private void initLoader() {
 		String path = "/diaries/" + diaryId + "/";
 		Bundle params = new Bundle();
 		Diary diary = new Diary();
@@ -107,9 +67,57 @@ public class StoryEditActivity extends Activity {
 
 				}, Diary.class);
 		
-		RequestAsyncTaskLoader<Diary> asyncTaskLoader = 
-				new RequestAsyncTaskLoader<Diary>(request);
-		asyncTaskLoader.execute(getLoaderManager());
+		asyncTaskLoader = 
+				new RequestAsyncTaskLoader<Diary>(request, getLoaderManager());		
+	}
+	
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		Log.d(TAG, "onCreate");
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.activity_story_edit);
+		
+		if (savedInstanceState == null) {
+			PlaceholderFragment fragment = new PlaceholderFragment();
+			
+			if (getIntent().getSerializableExtra(StoryDetailFragment.ARG_ITEM_NAME) instanceof Diary) {
+			    Bundle arguments = new Bundle();
+			    Diary diary = (Diary)getIntent().getSerializableExtra(StoryDetailFragment.ARG_ITEM_NAME);
+			    arguments.putSerializable(StoryDetailFragment.ARG_ITEM_NAME, diary);
+			    fragment.setArguments(arguments);
+			    
+			    diaryId = String.valueOf(diary.getId());
+			}
+			getFragmentManager().beginTransaction()
+					.add(R.id.container, fragment).commit();
+		}
+		
+		initLoader();
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		// Inflate the menu; this adds items to the action bar if it is present.
+		getMenuInflater().inflate(R.menu.story_edit, menu);
+		return true;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		// Handle action bar item clicks here. The action bar will
+		// automatically handle clicks on the Home/Up button, so long
+		// as you specify a parent activity in AndroidManifest.xml.
+		int id = item.getItemId();
+		if (id == R.id.action_settings) {
+			return true;
+		}
+		return super.onOptionsItemSelected(item);
+	}
+	
+	public void saveStory(View view) {
+		Toast.makeText(this, "saveStory", Toast.LENGTH_LONG).show();
+		
+		asyncTaskLoader.execute();
 	}
 
 	/**

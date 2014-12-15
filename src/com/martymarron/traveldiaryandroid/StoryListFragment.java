@@ -103,8 +103,9 @@ public class StoryListFragment extends ListFragment {
 		
 		Request<Diary[]> request = 
 				new Request<Diary[]>(getActivity(), "/diaries/", null, HttpMethod.GET, null, apiCallback, Diary[].class);
-		RequestAsyncTaskLoader<Diary[]> requestAsyncTaskLoader = new RequestAsyncTaskLoader<Diary[]>(request);
-		requestAsyncTaskLoader.execute(getLoaderManager());
+		RequestAsyncTaskLoader<Diary[]> requestAsyncTaskLoader = 
+				new RequestAsyncTaskLoader<Diary[]>(request, getLoaderManager());
+		requestAsyncTaskLoader.execute();
 
 	}
 

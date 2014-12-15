@@ -13,6 +13,7 @@ import org.springframework.http.HttpMethod;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.FragmentTransaction;
+import android.app.LoaderManager;
 import android.content.Intent;
 import android.content.Loader;
 import android.graphics.Color;
@@ -72,7 +73,9 @@ public class MapActivity extends Activity implements
 	private static final String PENDING_PUBLISH_KEY = "pendingPublishReauthorization";
 	
 	boolean pendingPublishReauthorization = false;
-
+	
+	private LoaderManager loaderManager;
+	
 	private UiLifecycleHelper uiHelper;
 
 	private Session.StatusCallback sessionStateCallback = new Session.StatusCallback() {
@@ -98,8 +101,6 @@ public class MapActivity extends Activity implements
 			Log.i(TAG, "Session closed...");
 		}
 	}
-
-
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -117,6 +118,8 @@ public class MapActivity extends Activity implements
 
 		uiHelper = new UiLifecycleHelper(this, sessionStateCallback);
 		uiHelper.onCreate(savedInstanceState);
+		
+		loaderManager = getLoaderManager();
 
 		if (savedInstanceState != null) {
 			pendingPublishReauthorization = savedInstanceState.getBoolean(PENDING_PUBLISH_KEY, false);
@@ -436,8 +439,8 @@ public class MapActivity extends Activity implements
 				}, com.martymarron.traveldiaryapi.Diary.MileStone.class);
 		
 		RequestAsyncTaskLoader<com.martymarron.traveldiaryapi.Diary.MileStone> asyncTaskLoader = 
-				new RequestAsyncTaskLoader<com.martymarron.traveldiaryapi.Diary.MileStone>(request);
-		asyncTaskLoader.execute(getLoaderManager());
+				new RequestAsyncTaskLoader<com.martymarron.traveldiaryapi.Diary.MileStone>(request, loaderManager);
+		asyncTaskLoader.execute();
     	
     }
 

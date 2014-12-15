@@ -211,6 +211,16 @@ public class MileStoneLoader {
 		        } else {
                     ms.setName(map.get("message").toString());
 
+				    try {
+					    SimpleDateFormat stf = new SimpleDateFormat("yyyy-MM-dd");
+				        ms.setStartTime(stf.parse(map.get("created_time").toString()));
+					
+					    SimpleDateFormat utf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
+					    ms.setUpdatedTime(utf.parse(map.get("updated_time").toString()));
+				    } catch (ParseException e) {
+					    Log.w(TAG, e.getMessage());
+				    }
+
                     JSONObject json = new JSONObject(map.get("place").toString());
 				    Log.d(TAG, json.toString(4));
 		        	GraphPlace gPlace = 

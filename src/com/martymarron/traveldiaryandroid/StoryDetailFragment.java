@@ -46,6 +46,8 @@ public class StoryDetailFragment extends Fragment {
 	public static final String ARG_ITEM_NAME = "item_name";
 	
 	private static final int ADD_MILESTONE_ACTIVITY = 1;
+	
+	private RequestAsyncTaskLoader<Diary> requestAsyncTaskLoader;
 
 
 	/**
@@ -58,38 +60,12 @@ public class StoryDetailFragment extends Fragment {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
-		if (getArguments().containsKey(ARG_ITEM_ID)) {
-			// Load the dummy content specified by the fragment
-			// arguments. In a real-world scenario, use a Loader
-			// to load content from a content provider.
-			String path = "/diaries/" + getArguments().getString(ARG_ITEM_ID) + "/";
-			Request<Diary> request = new Request<Diary>(getActivity(), path, null, HttpMethod.GET, null,
-				new Request.Callback<Diary>() {
-
-					@Override
-					public void onLoadFinished(Response<Diary> response) {
-						Diary data = response.getBody();
-						if (data != null) {
-						    Log.d(TAG, data.toString());
-						    ((TextView) getView().findViewById(R.id.story_detail)).setText(data.toString());
-						    diary = data;
-						}
-
-					}
-
-					@Override
-					public void onLoaderReset(Loader<Diary> loader) {
-						// TODO Auto-generated method stub
-						
-					}
-				}, Diary.class);
-			RequestAsyncTaskLoader<Diary> asyncTaskLoader =
-					new RequestAsyncTaskLoader<>(request);
-			asyncTaskLoader.execute(getLoaderManager());
-		}
+		
+		initAsyncTaskLoader();
 		
 		setHasOptionsMenu(true);
+		
+		Log.d(TAG, "onCreate");
 	}
 
 	@Override
@@ -163,6 +139,83 @@ public class StoryDetailFragment extends Fragment {
         Log.d(TAG, results);
 
     }
+    
+    private void initAsyncTaskLoader() {
+    	
+		if (getArguments().containsKey(ARG_ITEM_ID)) {
+			// Load the dummy content specified by the fragment
+			// arguments. In a real-world scenario, use a Loader
+			// to load content from a content provider.
+			String path = "/diaries/" + getArguments().getString(ARG_ITEM_ID) + "/";
+			Request<Diary> request = new Request<Diary>(getActivity(), path, null, HttpMethod.GET, null,
+				new Request.Callback<Diary>() {
+
+					@Override
+					public void onLoadFinished(Response<Diary> response) {
+						Log.d(TAG, "onLoadFinished");
+						Diary data = response.getBody();
+						if (data != null) {
+						    Log.d(TAG, data.toString());
+						    ((TextView) getView().findViewById(R.id.story_detail)).setText(data.toString());
+						    diary = data;
+						}
+					}
+
+					@Override
+					public void onLoaderReset(Loader<Diary> loader) {
+						// TODO Auto-generated method stub
+						Log.d(TAG, "onLoaderReset");
+					}
+				}, Diary.class);
+			requestAsyncTaskLoader =
+					new RequestAsyncTaskLoader<>(request, getLoaderManager());
+		}    	
+    }
+
+	@Override
+	public void onStart() {
+		// TODO Auto-generated method stub
+		super.onStart();
+		
+		requestAsyncTaskLoader.execute();
+		
+		Log.d(TAG, "onStart");
+	}
+
+	@Override
+	public void onResume() {
+		// TODO Auto-generated method stub
+		super.onResume();
+		Log.d(TAG, "onResume");
+	}
+
+	@Override
+	public void onPause() {
+		// TODO Auto-generated method stub
+		super.onPause();
+		Log.d(TAG, "onPause");
+	}
+
+	@Override
+	public void onStop() {
+		// TODO Auto-generated method stub
+		super.onStop();
+		Log.d(TAG, "onStop");
+	}
+
+	@Override
+	public void onDestroy() {
+		// TODO Auto-generated method stub
+		super.onDestroy();
+		Log.d(TAG, "onDestroy");
+	}
+
+	@Override
+	public void onDetach() {
+		// TODO Auto-generated method stub
+		super.onDetach();
+		Log.d(TAG, "onDetach");
+	}
 
 
 }
