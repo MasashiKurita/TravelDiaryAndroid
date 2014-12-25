@@ -24,10 +24,15 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.facebook.FacebookException;
 import com.facebook.Session;
 import com.facebook.SessionState;
 import com.facebook.UiLifecycleHelper;
 import com.facebook.model.GraphPlace;
+import com.facebook.widget.FacebookDialog;
+import com.facebook.widget.FacebookDialog.PendingCall;
+import com.facebook.widget.WebDialog;
+import com.facebook.widget.WebDialog.OnCompleteListener;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
@@ -288,7 +293,18 @@ public class MapActivity extends Activity implements
 			publishEvent();
 //			displaySelectedPlace(resultCode);
 		}
-		uiHelper.onActivityResult(requestCode, resultCode, data);
+		uiHelper.onActivityResult(requestCode, resultCode, data, new FacebookDialog.Callback() {
+			
+			@Override
+			public void onError(PendingCall pendingCall, Exception error, Bundle data) {
+				Log.e(TAG, String.format("Error %s", error.toString()));
+			}
+			
+			@Override
+			public void onComplete(PendingCall pendingCall, Bundle data) {
+				Log.i(TAG, "Success!");
+			}
+		});
 	}
 	
 	@Override
@@ -387,24 +403,48 @@ public class MapActivity extends Activity implements
 		
 		param.putString("place", selection.getId());
     	
-		msLoader = new MileStoneLoader(new MileStoneLoader.MileStoneLoaderCallback() {
-			
-			@Override
-			public void onPublished(String postId) {
-				addMilestone(postId);
-			}
-			
-			@Override
-			public void onLoaded(List<MileStone> milestones) {}
-		}, param, graphPath);
-			
-		try {
-			
-		    msLoader.publish();
-		    
-		} catch (MileStoneLoaderException e) {
-			Log.e(TAG, e.getMessage());
-		}
+//		msLoader = new MileStoneLoader(new MileStoneLoader.MileStoneLoaderCallback() {
+//			
+//			@Override
+//			public void onPublished(String postId) {
+//				addMilestone(postId);
+//			}
+//			
+//			@Override
+//			public void onLoaded(List<MileStone> milestones) {}
+//		}, param, graphPath);
+//			
+//		try {
+//			
+//		    msLoader.publish();
+//		    
+//		} catch (MileStoneLoaderException e) {
+//			Log.e(TAG, e.getMessage());
+//		}
+		
+//		param.putString("from", this.getString(R.string.app_id));
+//		param.putString("to", this.getString(R.string.app_page_id));
+		
+		if (FacebookDialog.canPresentShareDialog(getApplicationContext(), FacebookDialog.ShareDialogFeature.SHARE_DIALOG)) {
+			// publish the post using the Share Dialog
+			FacebookDialog shareDialog = new FacebookDialog.ShareDialogBuilder(this)
+			.setPlace(selection.getId())
+			.build();
+			uiHelper.trackPendingDialogCall(shareDialog.present());
+		} else {
+			WebDialog dialog =
+					new WebDialog.FeedDialogBuilder(this, session, param)
+			.setOnCompleteListener(new OnCompleteListener() {
+				
+				@Override
+				public void onComplete(Bundle values, FacebookException error) {
+					// TODO Auto-generated method stub
+					
+				}
+			})
+			.build();
+			dialog.show();
+		}				
 		
 		// Clear selection
 		application.setSelectedPlace(null);
