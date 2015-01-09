@@ -1,0 +1,1 @@
+include ':TravelDiaryAPIforAndroid', ':facebook-android-sdk:facebook'
