@@ -2,3 +2,5 @@
 /gen
 /bin
 /libs
+/build
+/.gradle

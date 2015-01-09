@@ -383,7 +383,6 @@
       <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/build/intermediates/exploded-aar/com.google.android.gms/play-services/6.5.87/res/drawable-mdpi/common_signin_btn_text_pressed_light.9.png" />
       <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/build/intermediates/exploded-aar/com.google.android.gms/play-services/6.5.87/res/drawable-xhdpi/common_signin_btn_text_pressed_light.9.png" />
       <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/build/intermediates/exploded-aar/com.google.android.gms/play-services/6.5.87/res/drawable-xxhdpi/common_signin_btn_text_pressed_light.9.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/gradle/wrapper/gradle-wrapper.jar" />
       <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/build/intermediates/exploded-aar/com.google.android.gms/play-services/6.5.87/res/raw/gtm_analytics" />
       <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/build/intermediates/exploded-aar/TravelDiaryAndroid/TravelDiaryAPIforAndroid/unspecified/res/drawable-hdpi-v4/ic_launcher.png" />
       <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/build/intermediates/exploded-aar/TravelDiaryAndroid/TravelDiaryAPIforAndroid/unspecified/res/drawable-mdpi-v4/ic_launcher.png" />
@@ -417,7 +416,6 @@
       <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/build/intermediates/exploded-aar/com.google.android.gms/play-services/6.5.87/res/drawable-mdpi/powered_by_google_light.png" />
       <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/build/intermediates/exploded-aar/com.google.android.gms/play-services/6.5.87/res/drawable-xhdpi/powered_by_google_light.png" />
       <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/build/intermediates/exploded-aar/com.google.android.gms/play-services/6.5.87/res/drawable-xxhdpi/powered_by_google_light.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/.name" />
       <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/build/intermediates/exploded-aar/TravelDiaryAndroid/TravelDiaryAPIforAndroid/unspecified/AndroidManifest.xml" />
       <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/build/intermediates/exploded-aar/com.android.support/appcompat-v7/21.0.3/AndroidManifest.xml" />
       <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/build/intermediates/exploded-aar/com.android.support/support-v4/21.0.3/AndroidManifest.xml" />
@@ -428,7 +426,6 @@
       <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/build/intermediates/exploded-aar/com.android.support/appcompat-v7/21.0.3/R.txt" />
       <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/build/intermediates/exploded-aar/com.facebook.android/facebook/3.22.0/R.txt" />
       <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/build/intermediates/exploded-aar/com.google.android.gms/play-services/6.5.87/R.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/TravelDiaryAndroid/TravelDiaryAndroid-TravelDiaryAndroid.iml" />
       <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/build/intermediates/exploded-aar/com.android.support/appcompat-v7/21.0.3/res/layout/abc_action_bar_title_item.xml" />
       <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/build/intermediates/exploded-aar/com.android.support/appcompat-v7/21.0.3/res/layout/abc_action_bar_up_container.xml" />
       <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/build/intermediates/exploded-aar/com.android.support/appcompat-v7/21.0.3/res/layout/abc_action_bar_view_list_nav_layout.xml" />
@@ -485,7 +482,6 @@
       <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/build/intermediates/exploded-aar/com.google.android.gms/play-services/6.5.87/res/values/admob_ads_attrs.xml" />
       <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/build/intermediates/exploded-aar/com.google.android.gms/play-services/6.5.87/res/values/admob_iap_style.xml" />
       <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/build/intermediates/exploded-aar/com.google.android.gms/play-services/6.5.87/res/values/admob_strings.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/build.gradle" />
       <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/build/intermediates/exploded-aar/com.facebook.android/facebook/3.22.0/res/drawable/com_facebook_button_blue.xml" />
       <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/build/intermediates/exploded-aar/com.facebook.android/facebook/3.22.0/res/drawable/com_facebook_button_check.xml" />
       <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/build/intermediates/exploded-aar/com.facebook.android/facebook/3.22.0/res/drawable/com_facebook_button_like.xml" />
@@ -595,18 +591,9 @@
       <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/build/intermediates/exploded-aar/com.google.android.gms/play-services/6.5.87/res/values-zh-rHK/common_strings.xml" />
       <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/build/intermediates/exploded-aar/com.google.android.gms/play-services/6.5.87/res/values-zh-rTW/common_strings.xml" />
       <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/build/intermediates/exploded-aar/com.google.android.gms/play-services/6.5.87/res/values-zu/common_strings.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/compiler.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/encodings.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/gradle/wrapper/gradle-wrapper.properties" />
       <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/build/intermediates/tmp/dex/debug/inputList.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local.properties" />
       <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/build/intermediates/exploded-aar/com.google.android.gms/play-services/6.5.87/res/values/maps_attrs.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/misc.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/modules.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/copyright/profiles_settings.xml" />
       <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/build/intermediates/exploded-aar/com.google.android.gms/play-services/6.5.87/proguard.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/scopes/scope_settings.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/settings.gradle" />
       <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/build/intermediates/exploded-aar/com.android.support/appcompat-v7/21.0.3/res/layout/support_simple_spinner_dropdown_item.xml" />
       <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/build/intermediates/exploded-aar/TravelDiaryAndroid/TravelDiaryAPIforAndroid/unspecified/res/values/values.xml" />
       <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/build/intermediates/exploded-aar/TravelDiaryAndroid/TravelDiaryAPIforAndroid/unspecified/res/values-v11/values.xml" />
@@ -707,7 +694,6 @@
       <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/build/intermediates/exploded-aar/com.facebook.android/facebook/3.22.0/res/values-ldpi-v4/values.xml" />
       <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/build/intermediates/exploded-aar/com.facebook.android/facebook/3.22.0/res/values-mdpi-v4/values.xml" />
       <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/build/intermediates/exploded-aar/com.facebook.android/facebook/3.22.0/res/values-xhdpi-v4/values.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/vcs.xml" />
       <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/build/intermediates/exploded-aar/com.google.android.gms/play-services/6.5.87/res/values/version.xml" />
       <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/build/intermediates/exploded-aar/com.google.android.gms/play-services/6.5.87/res/values/wallet_attrs.xml" />
       <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/build/intermediates/exploded-aar/com.google.android.gms/play-services/6.5.87/res/values/wallet_colors.xml" />
@@ -716,7 +702,8 @@
       <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/build/intermediates/exploded-aar/com.google.android.gms/play-services/6.5.87/res/values/wallet_strings.xml" />
       <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/build/intermediates/exploded-aar/com.google.android.gms/play-services/6.5.87/res/values-es/wallet_strings.xml" />
       <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/build/intermediates/exploded-aar/com.google.android.gms/play-services/6.5.87/res/values/wallet_styles.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gitignore" afterPath="$PROJECT_DIR$/.gitignore" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="TravelDiaryAndroid.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -2625,7 +2612,11 @@
       <created>1420768545174</created>
       <updated>1420768545191</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="Migrate to gradle">
+      <created>1420769387680</created>
+      <updated>1420769387680</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="TodoView" selected-index="0">
