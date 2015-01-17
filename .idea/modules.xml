@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/TravelDiaryAPIforAndroid/TravelDiaryAPIforAndroid.iml" filepath="$PROJECT_DIR$/TravelDiaryAPIforAndroid/TravelDiaryAPIforAndroid.iml" />
+      <module fileurl="file://$PROJECT_DIR$/TravelDiaryAPIforAndroid/TravelDiaryAPIforAndroid.iml" filepath="$PROJECT_DIR$/TravelDiaryAPIforAndroid/TravelDiaryAPIforAndroid.iml" />
       <module fileurl="file://$PROJECT_DIR$/TravelDiaryAndroid.iml" filepath="$PROJECT_DIR$/TravelDiaryAndroid.iml" />
       <module fileurl="file://$PROJECT_DIR$/facebook/facebook.iml" filepath="$PROJECT_DIR$/facebook/facebook.iml" />
     </modules>
