@@ -209,14 +209,15 @@ public class MileStoneLoader {
 			        ms.setVenue(venue);
 			        
 		        } else {
-                    ms.setName(map.get("message").toString());
+
+                    ms.setName(String.valueOf(map.get("message")));
 
 				    try {
 					    SimpleDateFormat stf = new SimpleDateFormat("yyyy-MM-dd");
-				        ms.setStartTime(stf.parse(map.get("created_time").toString()));
+				        ms.setStartTime(stf.parse(String.valueOf(map.get("created_time"))));
 					
 					    SimpleDateFormat utf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
-					    ms.setUpdatedTime(utf.parse(map.get("updated_time").toString()));
+					    ms.setUpdatedTime(utf.parse(String.valueOf(map.get("updated_time"))));
 				    } catch (ParseException e) {
 					    Log.w(TAG, e.getMessage());
 				    }
