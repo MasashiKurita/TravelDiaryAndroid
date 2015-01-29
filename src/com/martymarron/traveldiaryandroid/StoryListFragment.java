@@ -3,12 +3,17 @@ package com.martymarron.traveldiaryandroid;
 import org.springframework.http.HttpMethod;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ListFragment;
+import android.content.DialogInterface;
 import android.content.Loader;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 
 import com.martymarron.traveldiaryapi.Diary;
@@ -34,6 +39,8 @@ public class StoryListFragment extends ListFragment {
 	 * activated item position. Only used on tablets.
 	 */
 	private static final String STATE_ACTIVATED_POSITION = "activated_position";
+	
+//	private ListView rootView;
 
 	/**
 	 * The fragment's current callback object, which is notified of list item
@@ -80,17 +87,38 @@ public class StoryListFragment extends ListFragment {
 		super.onCreate(savedInstanceState);
 		Log.d(TAG, "onCreate");
 
+		initStories();
+	}
+	
+	private void initStories() {
 		Request.Callback<Diary[]> apiCallback = new Request.Callback<Diary[]>() {
 
 			@Override
 			public void onLoadFinished(Response<Diary[]> response) {
 				Diary[] data = response.getBody();
 
-				ArrayAdapter<Diary> adapter = 
-                		new ArrayAdapter<Diary>(getActivity(),
-                				android.R.layout.simple_list_item_activated_1,
-                				android.R.id.text1, data);
-                setListAdapter(adapter);
+                setListAdapter(new ArrayAdapter<Diary>(
+                		getActivity(),
+                		R.layout.view_story_list,
+                		R.id.text1,
+                		data) {
+
+							@Override
+							public View getView(final int position, View convertView, ViewGroup parent) {
+								View view = super.getView(position, convertView, parent);
+								
+								Button deleteButton = (Button)view.findViewById(R.id.button1);
+								if (deleteButton != null) {
+									deleteButton.setOnClickListener(new View.OnClickListener() {
+										
+										@Override
+										public void onClick(View v) {
+											deleteStory(position);
+										}
+									});
+								}
+								return view;
+							}});
         		
 			}
 
@@ -105,8 +133,73 @@ public class StoryListFragment extends ListFragment {
 				new Request<Diary[]>(getActivity(), "/diaries/", null, HttpMethod.GET, null, apiCallback, Diary[].class);
 		RequestAsyncTaskLoader<Diary[]> requestAsyncTaskLoader = 
 				new RequestAsyncTaskLoader<Diary[]>(request, getLoaderManager());
-		requestAsyncTaskLoader.execute();
+		requestAsyncTaskLoader.execute();		
+	}
+	
+	private void deleteStory(int position) {
+		
+		Log.d(TAG, "position="+String.valueOf(position));
 
+		final Diary diary = (Diary)getListAdapter().getItem(position);
+
+		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+		String message = String.format(getResources().getString(R.string.message_delete_confirmation), diary.getTitle());
+		builder.setMessage(message)
+		.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				Request<Diary> request = 
+						new Request<Diary>(
+								getActivity(), 
+								"/diaries/" + String.valueOf(diary.getId()) + "/", 
+								null, 
+								HttpMethod.DELETE, 
+								null, 
+								new Request.Callback<Diary>() {
+									
+									@Override
+									public void onLoaderReset(
+											Loader<Diary> loader) {
+										// TODO Auto-generated method stub
+										
+									}
+									
+									@Override
+									public void onLoadFinished(
+											Response<Diary> response) {
+										Diary data = response.getBody();
+										if (data != null) {
+										    Log.d(TAG, data.toString());
+										} else {
+											Log.d(TAG, response.getStatusCode().toString()+", "+response.getHeaders().toString());
+										}
+										
+										initStories();
+									}
+									
+								}, Diary.class);
+				RequestAsyncTaskLoader<Diary> requestAsyncTaskLoader = 
+						new RequestAsyncTaskLoader<Diary>(request, getLoaderManager());
+				requestAsyncTaskLoader.execute();
+			}
+		})
+		.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				// TODO Auto-generated method stub
+
+			}
+		});
+		AlertDialog dialog = builder.create();
+		dialog.show();
+    }
+
+	
+	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+		return inflater.inflate(R.layout.fragment_story_list, container, false);
 	}
 
 	@Override
@@ -164,7 +257,7 @@ public class StoryListFragment extends ListFragment {
 			outState.putInt(STATE_ACTIVATED_POSITION, mActivatedPosition);
 		}
 	}
-
+	
 	/**
 	 * Turns on activate-on-click mode. When this mode is on, list items will be
 	 * given the 'activated' state when touched.

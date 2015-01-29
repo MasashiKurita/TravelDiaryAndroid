@@ -1,9 +1,11 @@
 package com.martymarron.traveldiaryandroid;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
+import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 
 /**
@@ -21,8 +23,10 @@ import android.view.MenuItem;
  * This activity also implements the required
  * {@link StoryListFragment.Callbacks} interface to listen for item selections.
  */
-public class StoryListActivity extends Activity implements
+public class StoryListActivity extends ActionBarActivity implements
 		StoryListFragment.Callbacks {
+
+	private static final String TAG = "StoryListActivity";
 
 	/**
 	 * Whether or not the activity is in two-pane mode, i.e. running on a tablet
@@ -36,8 +40,17 @@ public class StoryListActivity extends Activity implements
 		setContentView(R.layout.activity_story_list);
 		// Show the Up button in the action bar.
 		//getActionBar().setDisplayHomeAsUpEnabled(true);
+		Log.d(TAG, "onCreate");
 
-		if (findViewById(R.id.story_detail_container) != null) {
+		if (savedInstanceState == null) {
+			// Create the detail fragment and add it to the activity
+			// using a fragment transaction.
+			StoryListFragment fragment = new StoryListFragment();
+			getFragmentManager().beginTransaction()
+					.add(R.id.story_list_container, fragment).commit();
+		}
+		
+		if (findViewById(R.id.story_list) != null) {
 			// The detail container view will be present only in the
 			// large-screen layouts (res/values-large and
 			// res/values-sw600dp). If this view is present, then the
@@ -46,10 +59,17 @@ public class StoryListActivity extends Activity implements
 
 			// In two-pane mode, list items should be given the
 			// 'activated' state when touched.
-			((StoryListFragment) getFragmentManager().findFragmentById(R.id.story_list)).setActivateOnItemClick(true);
+			((StoryListFragment) getFragmentManager().findFragmentById(R.id.story_list_container)).setActivateOnItemClick(true);
 		}
-
+		
 		// TODO: If exposing deep links into your app, handle intents here.
+	}
+	
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		// Inflate the menu; this adds items to the action bar if it is present.
+		getMenuInflater().inflate(R.menu.story_edit, menu);
+		return true;
 	}
 
 	@Override
@@ -84,7 +104,7 @@ public class StoryListActivity extends Activity implements
 			StoryDetailFragment fragment = new StoryDetailFragment();
 			fragment.setArguments(arguments);
 			getFragmentManager().beginTransaction()
-					.replace(R.id.story_detail_container, fragment).commit();
+					.replace(R.id.story_list_container, fragment).commit();
 
 		} else {
 			// In single-pane mode, simply start the detail activity
@@ -94,4 +114,5 @@ public class StoryListActivity extends Activity implements
 			startActivity(detailIntent);
 		}
 	}
+	
 }

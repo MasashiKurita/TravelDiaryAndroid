@@ -35,5 +35,7 @@
         <item>publish_actions</item>
         <item>manage_pages</item>
     </string-array>
+    <string name="message_delete_confirmation">Are you sure you want to delete \&quot; %s \&quot;?</string>
+    <string name="delete_story">Delete</string>
 
 </resources>
