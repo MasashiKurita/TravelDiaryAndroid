@@ -3,4 +3,5 @@ language: java
 jdk:
   - openjdk7
 
+before_script: "echo 'Build TravelDiaryAndroid'"
 script: "gradle build"
