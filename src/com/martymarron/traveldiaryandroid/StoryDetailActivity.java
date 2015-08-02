@@ -1,8 +1,9 @@
 package com.martymarron.traveldiaryandroid;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.NavUtils;
+import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.MenuItem;
 
@@ -14,7 +15,7 @@ import android.view.MenuItem;
  * This activity is mostly just a 'shell' activity containing nothing more than
  * a {@link StoryDetailFragment}.
  */
-public class StoryDetailActivity extends Activity {
+public class StoryDetailActivity extends ActionBarActivity {
 	
 	private static final String TAG = "StoryDetailActivity";
 	
@@ -52,15 +53,16 @@ public class StoryDetailActivity extends Activity {
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
+        Log.d(TAG, "onOptionsItemSelected: item=" + item.getTitle());
 		int id = item.getItemId();
-		if (id == android.R.id.home) {
+        if (id == android.R.id.home) {
 			// This ID represents the Home or Up button. In the case of this
 			// activity, the Up button is shown. For
 			// more details, see the Navigation pattern on Android Design:
 			//
 			// http://developer.android.com/design/patterns/navigation.html#up-vs-back
 			//
-			navigateUpTo(new Intent(this, StoryListActivity.class));
+            NavUtils.navigateUpTo(this, new Intent(this, StoryListActivity.class));
 			return true;
 		}
 

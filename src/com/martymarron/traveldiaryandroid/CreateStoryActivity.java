@@ -16,10 +16,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.facebook.Session;
-import com.facebook.SessionState;
-import com.facebook.UiLifecycleHelper;
-import com.facebook.model.GraphUser;
+import com.facebook.FacebookSdk;
 import com.martymarron.traveldiaryapi.Diary;
 import com.martymarron.traveldiaryapi.Request;
 import com.martymarron.traveldiaryapi.RequestAsyncTaskLoader;
@@ -33,34 +30,34 @@ public class CreateStoryActivity extends Activity {
 	
 	private RequestAsyncTaskLoader<Diary> asyncTaskLoader;
 	
-	private UiLifecycleHelper uiHelper;
-	
-	private Session.StatusCallback sessionStatusCallback = new Session.StatusCallback() {
+//	private UiLifecycleHelper uiHelper;
+//
+//	private Session.StatusCallback sessionStatusCallback = new Session.StatusCallback() {
 
-		@Override
-		public void call(Session session, SessionState state, Exception exception) {
-			onSessionStateChange(session, state, exception);
-		}
-	};
+//		@Override
+//		public void call(Session session, SessionState state, Exception exception) {
+//			onSessionStateChange(session, state, exception);
+//		}
+//	};
 	
-	private void onSessionStateChange(Session session, SessionState state, Exception exception) {
-		if (session.isOpened()) {
-			
-		    // make request to the /me API
-		    Log.d(TAG, "make request to the /me API");
-		    com.facebook.Request.newMeRequest(session, new com.facebook.Request.GraphUserCallback() {
-			
-			    // call back after Graph API response with user object
-			    @Override
-		 	    public void onCompleted(GraphUser user, com.facebook.Response response) {
-				    Log.d(TAG, "newMeRequest#onCompleted");
-				    if (user != null) {
-					    CreateStoryActivity.this.userId = user.getId();
-				    }	
-			    }
-		    }).executeAsync();
-	    }
-	}
+//	private void onSessionStateChange(Session session, SessionState state, Exception exception) {
+//		if (session.isOpened()) {
+//
+//		    // make request to the /me API
+//		    Log.d(TAG, "make request to the /me API");
+//		    com.facebook.Request.newMeRequest(session, new com.facebook.Request.GraphUserCallback() {
+//
+//			    // call back after Graph API response with user object
+//			    @Override
+//		 	    public void onCompleted(GraphUser user, com.facebook.Response response) {
+//				    Log.d(TAG, "newMeRequest#onCompleted");
+//				    if (user != null) {
+//					    CreateStoryActivity.this.userId = user.getId();
+//				    }
+//			    }
+//		    }).executeAsync();
+//	    }
+//	}
 	
 	private void initLoader() {
 
@@ -99,10 +96,11 @@ public class CreateStoryActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+        FacebookSdk.sdkInitialize(getApplicationContext());
 		setContentView(R.layout.activity_create_story);
 			
-        uiHelper = new UiLifecycleHelper(this, sessionStatusCallback);
-        uiHelper.onCreate(savedInstanceState);
+//        uiHelper = new UiLifecycleHelper(this, sessionStatusCallback);
+//        uiHelper.onCreate(savedInstanceState);
         
 		if (savedInstanceState == null) {
 			getFragmentManager().beginTransaction().add(R.id.container, new PlaceholderFragment()).commit();
@@ -139,42 +137,36 @@ public class CreateStoryActivity extends Activity {
 	protected void onResume() {
 		// TODO Auto-generated method stub
 		super.onResume();
-		uiHelper.onResume();
 	}
 
 	@Override
 	protected void onSaveInstanceState(Bundle outState) {
 		// TODO Auto-generated method stub
 		super.onSaveInstanceState(outState);
-		uiHelper.onSaveInstanceState(outState);;
 	}
 
 	@Override
 	protected void onPause() {
 		// TODO Auto-generated method stub
 		super.onPause();
-		uiHelper.onPause();
 	}
 
 	@Override
 	protected void onStop() {
 		// TODO Auto-generated method stub
 		super.onStop();
-		uiHelper.onStop();
 	}
 
 	@Override
 	protected void onDestroy() {
 		// TODO Auto-generated method stub
 		super.onDestroy();
-		uiHelper.onDestroy();
 	}
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		// TODO Auto-generated method stub
 		super.onActivityResult(requestCode, resultCode, data);
-		uiHelper.onActivityResult(requestCode, resultCode, data);
 	}
 
 

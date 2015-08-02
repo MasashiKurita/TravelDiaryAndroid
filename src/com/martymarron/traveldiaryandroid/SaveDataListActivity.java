@@ -5,11 +5,19 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 
-import com.facebook.Session;
-import com.facebook.SessionState;
-import com.facebook.UiLifecycleHelper;
-import com.facebook.widget.FacebookDialog;
-import com.facebook.widget.FacebookDialog.PendingCall;
+import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
+import com.facebook.FacebookSdk;
+import com.facebook.login.LoginManager;
+import com.facebook.login.LoginResult;
+//import com.facebook.Session;
+//import com.facebook.SessionState;
+//import com.facebook.UiLifecycleHelper;
+//import com.facebook.widget.FacebookDialog;
+//import com.facebook.widget.FacebookDialog.PendingCall;
+
+import java.util.Arrays;
 
 /**
  * An activity representing a list of SaveDatas. This activity has different
@@ -32,44 +40,72 @@ public class SaveDataListActivity extends FragmentActivity implements
 	
 	private static final String TAG = "SaveDataList";
 	
-//	private static final List<String> PERMISSIONS = Arrays.asList("user_activities", "user_events", "user_location", "user_status");
-//	private final List<String> PERMISSIONS;
 	private static final String PENDING_PUBLISH_KEY = "pendingPublishReauthorization";
 
-	private UiLifecycleHelper uiHelper;
-	
+    private CallbackManager callbackManager;
+
+    private FacebookCallback<LoginResult> loginResultCallback =
+            new FacebookCallback<LoginResult>() {
+                @Override
+                public void onSuccess(LoginResult loginResult) {
+                }
+
+                @Override
+                public void onCancel() {
+
+                }
+
+                @Override
+                public void onError(FacebookException e) {
+
+                }
+            };
+
 	private boolean pendingPublishReauthorization = false;
-	
-	private Session.StatusCallback sessionStateCallback = new Session.StatusCallback() {
-		
-		@Override
-		public void call(Session session, SessionState state, Exception exception) {
-			onSessionStateChange(session, state, exception);
-		}
-	};
-	
-	private void onSessionStateChange(Session session, SessionState state, Exception exception) {
-		if (state.isOpened()) {
-			Log.i(TAG, "Logged in...");
-			if (pendingPublishReauthorization
-		     && state.equals(SessionState.OPENED_TOKEN_UPDATED)) {
-				pendingPublishReauthorization = false;
-			}
-		} else if (state.isClosed()) {
-			Log.i(TAG, "Logged out...");
-		}
-	}
-	
+
+//	private Session.StatusCallback sessionStateCallback = new Session.StatusCallback() {
+//
+//		@Override
+//		public void call(Session session, SessionState state, Exception exception) {
+//			onSessionStateChange(session, state, exception);
+//		}
+//	};
+//
+//	private void onSessionStateChange(Session session, SessionState state, Exception exception) {
+//		if (state.isOpened()) {
+//			Log.i(TAG, "Logged in...");
+//			if (pendingPublishReauthorization
+//		     && state.equals(SessionState.OPENED_TOKEN_UPDATED)) {
+//				pendingPublishReauthorization = false;
+//			}
+//		} else if (state.isClosed()) {
+//			Log.i(TAG, "Logged out...");
+//		}
+//	}
+
 	private void loginFacebook() {
-		
-		Session session = Session.getActiveSession();
-		if (!session.isOpened() && !session.isClosed()) {
-			session.openForRead(new Session.OpenRequest(this)
-			.setPermissions(getResources().getStringArray(R.array.app_permissions_read))
-			.setCallback(sessionStateCallback));
-		} else {
-			Session.openActiveSession(this, true, sessionStateCallback);
-		}		
+
+        this.callbackManager = CallbackManager.Factory.create();
+        LoginManager.getInstance().registerCallback(callbackManager,
+                new FacebookCallback<LoginResult>(){
+                    @Override
+                    public void onSuccess(LoginResult loginResult) {
+                        // App code
+                    }
+
+                    @Override
+                    public void onCancel() {
+                        // App code
+                    }
+
+                    @Override
+                    public void onError(FacebookException exception) {
+                        // App code
+                    }
+                });
+
+        LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList(getResources().getStringArray(R.array.app_permissions_read)));
+
 	}
 	
 	/**
@@ -81,6 +117,8 @@ public class SaveDataListActivity extends FragmentActivity implements
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+        FacebookSdk.sdkInitialize(getApplicationContext());
+
 		setContentView(R.layout.activity_savedata_list);
 
 		if (findViewById(R.id.savedata_detail_container) != null) {
@@ -99,9 +137,6 @@ public class SaveDataListActivity extends FragmentActivity implements
 
 		// TODO: If exposing deep links into your app, handle intents here.
 		
-		uiHelper = new UiLifecycleHelper(this, sessionStateCallback);
-		uiHelper.onCreate(savedInstanceState);
-
 		loginFacebook();
 		
 	}
@@ -142,42 +177,27 @@ public class SaveDataListActivity extends FragmentActivity implements
 	@Override
 	public void onResume() {
 		super.onResume();
-		uiHelper.onResume();
 	}
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
-		uiHelper.onActivityResult(requestCode, resultCode, data, new FacebookDialog.Callback() {
-			
-			@Override
-			public void onError(PendingCall pendingCall, Exception error, Bundle data) {
-				Log.e(TAG, String.format("Error %s", error.toString()));
-			}
-			
-			@Override
-			public void onComplete(PendingCall pendingCall, Bundle data) {
-				Log.i(TAG, "Success!");
-			}
-		});
+        callbackManager.onActivityResult(requestCode, resultCode, data);
 	}
 	
 	@Override
 	public void onPause() {
 		super.onPause();
-		uiHelper.onPause();
 	}
 	
 	@Override
 	public void onDestroy() {
 		super.onDestroy();
-		uiHelper.onDestroy();
 	}
 	
 	@Override
 	public void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
 		outState.putBoolean(PENDING_PUBLISH_KEY, pendingPublishReauthorization);
-		uiHelper.onSaveInstanceState(outState);
 	}
 
 }
