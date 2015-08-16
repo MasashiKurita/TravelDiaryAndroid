@@ -25,14 +25,6 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.facebook.FacebookException;
-import com.facebook.Session;
-import com.facebook.SessionState;
-import com.facebook.UiLifecycleHelper;
-import com.facebook.model.GraphPlace;
-import com.facebook.widget.FacebookDialog;
-import com.facebook.widget.FacebookDialog.PendingCall;
-import com.facebook.widget.WebDialog;
-import com.facebook.widget.WebDialog.OnCompleteListener;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
@@ -81,32 +73,7 @@ public class MapActivity extends Activity implements
 	
 	private LoaderManager loaderManager;
 	
-	private UiLifecycleHelper uiHelper;
 
-	private Session.StatusCallback sessionStateCallback = new Session.StatusCallback() {
-		
-		@Override
-		public void call(Session session, SessionState state, Exception exception) {
-			Log.i(TAG, "StatusCallback.call");
-			onSessionStateChange(session, state, exception);
-		}
-	};
-
-	private void onSessionStateChange(Session session, SessionState state, Exception exception) {
-		if (state.isOpened()) {
-			Log.i(TAG, "Publish permissions Approved...");
-			Log.i(TAG, "Access Token: "+ session.getAccessToken());
-			
-			if (pendingPublishReauthorization
-		     && state.equals(SessionState.OPENED_TOKEN_UPDATED)) {
-				pendingPublishReauthorization = false;
-	        	publishEvent();
-			}
-		} else if (state.isClosed()) {
-			Log.i(TAG, "Session closed...");
-		}
-	}
-	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -121,9 +88,7 @@ public class MapActivity extends Activity implements
 		mNavigationDrawerFragment.setUp(R.id.navigation_drawer,
 				(DrawerLayout) findViewById(R.id.drawer_layout));
 
-		uiHelper = new UiLifecycleHelper(this, sessionStateCallback);
-		uiHelper.onCreate(savedInstanceState);
-		
+
 		loaderManager = getLoaderManager();
 
 		if (savedInstanceState != null) {
@@ -293,36 +258,22 @@ public class MapActivity extends Activity implements
 			publishEvent();
 //			displaySelectedPlace(resultCode);
 		}
-		uiHelper.onActivityResult(requestCode, resultCode, data, new FacebookDialog.Callback() {
-			
-			@Override
-			public void onError(PendingCall pendingCall, Exception error, Bundle data) {
-				Log.e(TAG, String.format("Error %s", error.toString()));
-			}
-			
-			@Override
-			public void onComplete(PendingCall pendingCall, Bundle data) {
-				Log.i(TAG, "Success!");
-			}
-		});
+
 	}
 	
 	@Override
 	public void onResume() {
 		super.onResume();
-		uiHelper.onResume();
 	};
 	
 	@Override
 	public void onDestroy() {
 		super.onDestroy();
-		uiHelper.onDestroy();
 	};
 	
 	@Override
 	public void onPause() {
 		super.onPause();
-		uiHelper.onPause();
 	};
 	
 	
@@ -330,14 +281,12 @@ public class MapActivity extends Activity implements
 	protected void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
 		outState.putBoolean(PENDING_PUBLISH_KEY, pendingPublishReauthorization);
-		uiHelper.onSaveInstanceState(outState);
 	}
 
     
 	@Override
 	protected void onStop() {
 		super.onStop();
-		uiHelper.onStop();
 	}
 
 
@@ -379,29 +328,25 @@ public class MapActivity extends Activity implements
     public void publishEvent() {
 
         AddMileStoneApplication application = (AddMileStoneApplication) getApplication();
-        GraphPlace selection = application.getSelectedPlace();
-    	
-    	Session session = Session.getActiveSession();
-    	
-	    if (session != null && selection != null) {
-	    	List<String> PUBLISH_PERMISSIONS = 
-	    			Arrays.asList(getResources().getStringArray(R.array.app_permissions_publish));
-			List<String> permissions = session.getPermissions();
-			if (!isSubsetOf(PUBLISH_PERMISSIONS, permissions)) {
-				pendingPublishReauthorization = true;
-				Session.NewPermissionsRequest permRequest =
-						new Session.NewPermissionsRequest(this, PUBLISH_PERMISSIONS);
-	    	    session.requestNewPublishPermissions(permRequest);
-	    	    return;
-			}
-	    }
+//	    if (session != null && selection != null) {
+//	    	List<String> PUBLISH_PERMISSIONS =
+//	    			Arrays.asList(getResources().getStringArray(R.array.app_permissions_publish));
+//			List<String> permissions = session.getPermissions();
+//			if (!isSubsetOf(PUBLISH_PERMISSIONS, permissions)) {
+//				pendingPublishReauthorization = true;
+//				Session.NewPermissionsRequest permRequest =
+//						new Session.NewPermissionsRequest(this, PUBLISH_PERMISSIONS);
+//	    	    session.requestNewPublishPermissions(permRequest);
+//	    	    return;
+//			}
+//	    }
     	    	
     	String graphPath = "/" + this.getString(R.string.app_page_id)  +"/feed";
     	
 		Bundle param = new Bundle();
 		param.putString("message", "Test Msg");
 		
-		param.putString("place", selection.getId());
+//		param.putString("place", selection.getId());
     	
 //		msLoader = new MileStoneLoader(new MileStoneLoader.MileStoneLoaderCallback() {
 //			
@@ -425,29 +370,29 @@ public class MapActivity extends Activity implements
 //		param.putString("from", this.getString(R.string.app_id));
 //		param.putString("to", this.getString(R.string.app_page_id));
 		
-		if (FacebookDialog.canPresentShareDialog(getApplicationContext(), FacebookDialog.ShareDialogFeature.SHARE_DIALOG)) {
-			// publish the post using the Share Dialog
-			FacebookDialog shareDialog = new FacebookDialog.ShareDialogBuilder(this)
-			.setPlace(selection.getId())
-			.build();
-			uiHelper.trackPendingDialogCall(shareDialog.present());
-		} else {
-			WebDialog dialog =
-					new WebDialog.FeedDialogBuilder(this, session, param)
-			.setOnCompleteListener(new OnCompleteListener() {
-				
-				@Override
-				public void onComplete(Bundle values, FacebookException error) {
-					// TODO Auto-generated method stub
-					
-				}
-			})
-			.build();
-			dialog.show();
-		}				
+//		if (FacebookDialog.canPresentShareDialog(getApplicationContext(), FacebookDialog.ShareDialogFeature.SHARE_DIALOG)) {
+//			// publish the post using the Share Dialog
+//			FacebookDialog shareDialog = new FacebookDialog.ShareDialogBuilder(this)
+//			.setPlace(selection.getId())
+//			.build();
+//			uiHelper.trackPendingDialogCall(shareDialog.present());
+//		} else {
+//			WebDialog dialog =
+//					new WebDialog.FeedDialogBuilder(this, session, param)
+//			.setOnCompleteListener(new OnCompleteListener() {
+//
+//				@Override
+//				public void onComplete(Bundle values, FacebookException error) {
+//					// TODO Auto-generated method stub
+//
+//				}
+//			})
+//			.build();
+//			dialog.show();
+//		}
 		
 		// Clear selection
-		application.setSelectedPlace(null);
+//		application.setSelectedPlace(null);
     	
     }
     

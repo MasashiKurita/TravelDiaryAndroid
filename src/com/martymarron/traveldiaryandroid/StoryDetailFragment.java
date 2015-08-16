@@ -15,8 +15,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.facebook.model.GraphLocation;
-import com.facebook.model.GraphPlace;
 import com.martymarron.traveldiaryapi.Diary;
 import com.martymarron.traveldiaryapi.Request;
 import com.martymarron.traveldiaryapi.RequestAsyncTaskLoader;
@@ -123,18 +121,18 @@ public class StoryDetailFragment extends Fragment {
         String results = "";
         AddMileStoneApplication application = (AddMileStoneApplication) getActivity().getApplication();
 
-        GraphPlace selection = application.getSelectedPlace();
-        if (selection != null) {
-            GraphLocation location = selection.getLocation();
-
-            results = String.format("Name: %s\nCategory: %s\nLocation: (%f,%f)\nStreet: %s, %s, %s, %s, %s",
-                    selection.getName(), selection.getCategory(),
-                    location.getLatitude(), location.getLongitude(),
-                    location.getStreet(), location.getCity(), location.getState(), location.getZip(),
-                    location.getCountry());
-        } else {
-            results = "<No place selected>";
-        }
+//        GraphPlace selection = application.getSelectedPlace();
+//        if (selection != null) {
+//            GraphLocation location = selection.getLocation();
+//
+//            results = String.format("Name: %s\nCategory: %s\nLocation: (%f,%f)\nStreet: %s, %s, %s, %s, %s",
+//                    selection.getName(), selection.getCategory(),
+//                    location.getLatitude(), location.getLongitude(),
+//                    location.getStreet(), location.getCity(), location.getState(), location.getZip(),
+//                    location.getCountry());
+//        } else {
+//            results = "<No place selected>";
+//        }
 
         Log.d(TAG, results);
 

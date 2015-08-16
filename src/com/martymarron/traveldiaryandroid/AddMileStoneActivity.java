@@ -12,14 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.facebook.model.GraphPlace;
-import com.facebook.widget.PickerFragment;
-import com.facebook.widget.PickerFragment.GraphObjectFilter;
-import com.facebook.widget.PlacePickerFragment;
-
 public class AddMileStoneActivity extends FragmentActivity {
-	
-	PlacePickerFragment placePickerFragment;
 
 	private static final String PICKER_FRAGMENT_TAG = "picker";
 	
@@ -35,34 +28,34 @@ public class AddMileStoneActivity extends FragmentActivity {
 //					.add(R.id.container, new PlaceholderFragment()).commit();
 		}
 
-		placePickerFragment = (PlacePickerFragment) getSupportFragmentManager().findFragmentByTag(PICKER_FRAGMENT_TAG);
-		if (placePickerFragment == null) {
-			placePickerFragment = new PlacePickerFragment();
-		     placePickerFragment.setOnSelectionChangedListener(new PickerFragment.OnSelectionChangedListener() {
-		            @Override
-		            public void onSelectionChanged(PickerFragment<?> fragment) {
-		                if (placePickerFragment.getSelection() != null) {
-		                    finishActivity();
-		                }
-		            }
-		        });
-		        placePickerFragment.setOnDoneButtonClickedListener(new PickerFragment.OnDoneButtonClickedListener() {
-		            @Override
-		            public void onDoneButtonClicked(PickerFragment<?> fragment) {
-		                finishActivity();
-		            }
-		        });
-		}
-		placePickerFragment.setFilter(new GraphObjectFilter<GraphPlace>() {
-
-			@Override
-			public boolean includeItem(GraphPlace graphObject) {
-				return true;
-			}
-		});
+//		placePickerFragment = (PlacePickerFragment) getSupportFragmentManager().findFragmentByTag(PICKER_FRAGMENT_TAG);
+//		if (placePickerFragment == null) {
+//			placePickerFragment = new PlacePickerFragment();
+//		     placePickerFragment.setOnSelectionChangedListener(new PickerFragment.OnSelectionChangedListener() {
+//		            @Override
+//		            public void onSelectionChanged(PickerFragment<?> fragment) {
+//		                if (placePickerFragment.getSelection() != null) {
+//		                    finishActivity();
+//		                }
+//		            }
+//		        });
+//		        placePickerFragment.setOnDoneButtonClickedListener(new PickerFragment.OnDoneButtonClickedListener() {
+//		            @Override
+//		            public void onDoneButtonClicked(PickerFragment<?> fragment) {
+//		                finishActivity();
+//		            }
+//		        });
+//		}
+//		placePickerFragment.setFilter(new GraphObjectFilter<GraphPlace>() {
+//
+//			@Override
+//			public boolean includeItem(GraphPlace graphObject) {
+//				return true;
+//			}
+//		});
 		
 		FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-		fragmentTransaction.replace(R.id.container, placePickerFragment, PICKER_FRAGMENT_TAG);
+//		fragmentTransaction.replace(R.id.container, placePickerFragment, PICKER_FRAGMENT_TAG);
 		fragmentTransaction.commit();
 		
 	}
@@ -70,7 +63,7 @@ public class AddMileStoneActivity extends FragmentActivity {
 	private void finishActivity() {
 		Log.d(TAG, getApplication().toString());
 		AddMileStoneApplication application = (AddMileStoneApplication) getApplication();
-		application.setSelectedPlace(placePickerFragment.getSelection());
+//		application.setSelectedPlace(placePickerFragment.getSelection());
 		
 		setResult(RESULT_OK, null);
 		finish();
@@ -124,11 +117,11 @@ public class AddMileStoneActivity extends FragmentActivity {
 	@Override
 	protected void onStart() {
 		super.onStart();
-		try {
-			placePickerFragment.loadData(false);
-		} catch (Exception e) {
-			onError(e);
-		}
+//		try {
+//			placePickerFragment.loadData(false);
+//		} catch (Exception e) {
+//			onError(e);
+//		}
 	}
 	
 }
