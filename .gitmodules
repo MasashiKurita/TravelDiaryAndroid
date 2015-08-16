@@ -1,7 +1,3 @@
 [submodule "TravelDiaryAPIforAndroid"]
 	path = TravelDiaryAPIforAndroid
 	url = https://github.com/MasashiKurita/TravelDiaryAPIforAndroid.git
-[submodule "facebook-android-sdk"]
-	path = facebook-android-sdk
-	url = https://github.com/facebook/facebook-android-sdk
-	ignore = dirty
